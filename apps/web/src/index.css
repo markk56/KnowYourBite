@@ -6,73 +6,75 @@
 /*
  * Brand design tokens — see "Claude - Know Your Bite Design Protocol.md".
  * Gold/amber primary + olive/sage secondary on warm-neutral surfaces.
+ * Stored as bare HSL channels ("H S% L%") so Tailwind's opacity modifiers
+ * (bg-primary/90, bg-muted-foreground/30, …) resolve via hsl(var(--x)/<alpha>).
  * TODO(M0.6 follow-up): self-host Inter (woff2) instead of the Google Fonts CDN.
  */
 :root {
-  --background: hsl(0, 0%, 98%);
-  --foreground: hsl(36, 16%, 17%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(36, 16%, 17%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(36, 16%, 17%);
-  --primary: hsl(43, 74%, 52%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(88, 24%, 53%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(210, 11%, 96%);
-  --muted-foreground: hsl(36, 9%, 47%);
-  --accent: hsl(88, 24%, 53%);
-  --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(0, 72%, 51%);
-  --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(214, 13%, 91%);
-  --input: hsl(214, 13%, 91%);
-  --ring: hsl(43, 74%, 52%);
-  --chart-1: hsl(43, 74%, 52%);
-  --chart-2: hsl(88, 24%, 53%);
-  --chart-3: hsl(42, 92%, 56%);
-  --chart-4: hsl(147, 78%, 42%);
-  --chart-5: hsl(341, 75%, 51%);
-  --sidebar: hsl(180, 6.67%, 97.06%);
-  --sidebar-foreground: hsl(36, 16%, 17%);
-  --sidebar-primary: hsl(43, 74%, 52%);
-  --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: hsl(88, 24%, 53%);
-  --sidebar-accent-foreground: hsl(0, 0%, 100%);
-  --sidebar-border: hsl(214, 13%, 91%);
-  --sidebar-ring: hsl(43, 74%, 52%);
+  --background: 0 0% 98%;
+  --foreground: 36 16% 17%;
+  --card: 0 0% 100%;
+  --card-foreground: 36 16% 17%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 36 16% 17%;
+  --primary: 43 74% 52%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 88 24% 53%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 210 11% 96%;
+  --muted-foreground: 36 9% 47%;
+  --accent: 88 24% 53%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 13% 91%;
+  --input: 214 13% 91%;
+  --ring: 43 74% 52%;
+  --chart-1: 43 74% 52%;
+  --chart-2: 88 24% 53%;
+  --chart-3: 42 92% 56%;
+  --chart-4: 147 78% 42%;
+  --chart-5: 341 75% 51%;
+  --sidebar: 180 6.67% 97.06%;
+  --sidebar-foreground: 36 16% 17%;
+  --sidebar-primary: 43 74% 52%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 88 24% 53%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 214 13% 91%;
+  --sidebar-ring: 43 74% 52%;
   --font-sans: 'Inter', system-ui, sans-serif;
   --radius: 8px;
 }
 
 .dark {
-  --background: hsl(36, 16%, 12%);
-  --foreground: hsl(210, 11%, 96%);
-  --card: hsl(36, 16%, 15%);
-  --card-foreground: hsl(210, 11%, 96%);
-  --popover: hsl(36, 16%, 15%);
-  --popover-foreground: hsl(210, 11%, 96%);
-  --primary: hsl(43, 74%, 52%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(88, 24%, 40%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(36, 16%, 20%);
-  --muted-foreground: hsl(36, 9%, 60%);
-  --accent: hsl(88, 24%, 40%);
-  --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(0, 72%, 51%);
-  --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(36, 16%, 25%);
-  --input: hsl(36, 16%, 25%);
-  --ring: hsl(43, 74%, 52%);
-  --sidebar: hsl(36, 16%, 15%);
-  --sidebar-foreground: hsl(210, 11%, 96%);
-  --sidebar-primary: hsl(43, 74%, 52%);
-  --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: hsl(88, 24%, 40%);
-  --sidebar-accent-foreground: hsl(0, 0%, 100%);
-  --sidebar-border: hsl(36, 16%, 25%);
-  --sidebar-ring: hsl(43, 74%, 52%);
+  --background: 36 16% 12%;
+  --foreground: 210 11% 96%;
+  --card: 36 16% 15%;
+  --card-foreground: 210 11% 96%;
+  --popover: 36 16% 15%;
+  --popover-foreground: 210 11% 96%;
+  --primary: 43 74% 52%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 88 24% 40%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 36 16% 20%;
+  --muted-foreground: 36 9% 60%;
+  --accent: 88 24% 40%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 36 16% 25%;
+  --input: 36 16% 25%;
+  --ring: 43 74% 52%;
+  --sidebar: 36 16% 15%;
+  --sidebar-foreground: 210 11% 96%;
+  --sidebar-primary: 43 74% 52%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 88 24% 40%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 36 16% 25%;
+  --sidebar-ring: 43 74% 52%;
 }
 
 @layer base {

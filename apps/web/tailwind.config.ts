@@ -1,7 +1,11 @@
 import type { Config } from 'tailwindcss'
 
-// Brand system per "Claude - Know Your Bite Design Protocol.md". Colors are
-// driven by CSS variables (see src/index.css) so light/dark themes swap cleanly.
+// Brand system per "Claude - Know Your Bite Design Protocol.md". Tokens are bare
+// HSL channels in src/index.css; wrapping them as hsl(var(--x) / <alpha-value>)
+// lets opacity modifiers (bg-primary/90, text-muted-foreground/50, …) work and
+// keeps light/dark theme swapping clean.
+const withAlpha = (variable: string) => `hsl(var(${variable}) / <alpha-value>)`
+
 export default {
   darkMode: ['class'],
   content: ['./index.html', './src/**/*.{ts,tsx}'],
@@ -13,34 +17,37 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
-        card: { DEFAULT: 'var(--card)', foreground: 'var(--card-foreground)' },
-        popover: { DEFAULT: 'var(--popover)', foreground: 'var(--popover-foreground)' },
-        primary: { DEFAULT: 'var(--primary)', foreground: 'var(--primary-foreground)' },
-        secondary: { DEFAULT: 'var(--secondary)', foreground: 'var(--secondary-foreground)' },
-        muted: { DEFAULT: 'var(--muted)', foreground: 'var(--muted-foreground)' },
-        accent: { DEFAULT: 'var(--accent)', foreground: 'var(--accent-foreground)' },
-        destructive: { DEFAULT: 'var(--destructive)', foreground: 'var(--destructive-foreground)' },
-        border: 'var(--border)',
-        input: 'var(--input)',
-        ring: 'var(--ring)',
+        background: withAlpha('--background'),
+        foreground: withAlpha('--foreground'),
+        card: { DEFAULT: withAlpha('--card'), foreground: withAlpha('--card-foreground') },
+        popover: { DEFAULT: withAlpha('--popover'), foreground: withAlpha('--popover-foreground') },
+        primary: { DEFAULT: withAlpha('--primary'), foreground: withAlpha('--primary-foreground') },
+        secondary: { DEFAULT: withAlpha('--secondary'), foreground: withAlpha('--secondary-foreground') },
+        muted: { DEFAULT: withAlpha('--muted'), foreground: withAlpha('--muted-foreground') },
+        accent: { DEFAULT: withAlpha('--accent'), foreground: withAlpha('--accent-foreground') },
+        destructive: {
+          DEFAULT: withAlpha('--destructive'),
+          foreground: withAlpha('--destructive-foreground'),
+        },
+        border: withAlpha('--border'),
+        input: withAlpha('--input'),
+        ring: withAlpha('--ring'),
         chart: {
-          1: 'var(--chart-1)',
-          2: 'var(--chart-2)',
-          3: 'var(--chart-3)',
-          4: 'var(--chart-4)',
-          5: 'var(--chart-5)',
+          1: withAlpha('--chart-1'),
+          2: withAlpha('--chart-2'),
+          3: withAlpha('--chart-3'),
+          4: withAlpha('--chart-4'),
+          5: withAlpha('--chart-5'),
         },
         sidebar: {
-          DEFAULT: 'var(--sidebar)',
-          foreground: 'var(--sidebar-foreground)',
-          primary: 'var(--sidebar-primary)',
-          'primary-foreground': 'var(--sidebar-primary-foreground)',
-          accent: 'var(--sidebar-accent)',
-          'accent-foreground': 'var(--sidebar-accent-foreground)',
-          border: 'var(--sidebar-border)',
-          ring: 'var(--sidebar-ring)',
+          DEFAULT: withAlpha('--sidebar'),
+          foreground: withAlpha('--sidebar-foreground'),
+          primary: withAlpha('--sidebar-primary'),
+          'primary-foreground': withAlpha('--sidebar-primary-foreground'),
+          accent: withAlpha('--sidebar-accent'),
+          'accent-foreground': withAlpha('--sidebar-accent-foreground'),
+          border: withAlpha('--sidebar-border'),
+          ring: withAlpha('--sidebar-ring'),
         },
       },
       fontFamily: {
