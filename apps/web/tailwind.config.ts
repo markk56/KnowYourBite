@@ -1,14 +1,18 @@
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import type { Config } from 'tailwindcss'
 
 // Brand system per "Claude - Know Your Bite Design Protocol.md". Tokens are bare
 // HSL channels in src/index.css; wrapping them as hsl(var(--x) / <alpha-value>)
-// lets opacity modifiers (bg-primary/90, text-muted-foreground/50, …) work and
-// keeps light/dark theme swapping clean.
+// lets opacity modifiers (bg-primary/90, text-muted-foreground/50, …) work.
+const here = dirname(fileURLToPath(import.meta.url))
 const withAlpha = (variable: string) => `hsl(var(${variable}) / <alpha-value>)`
 
 export default {
   darkMode: ['class'],
-  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  // Absolute globs: the dev server runs from the repo root, so cwd-relative
+  // content paths would scan the wrong directory and generate no utilities.
+  content: [resolve(here, 'index.html'), resolve(here, 'src/**/*.{ts,tsx}')],
   theme: {
     extend: {
       borderRadius: {
