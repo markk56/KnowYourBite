@@ -18,7 +18,15 @@ export function AuthPage() {
   const login = useLogin()
   const register = useRegister()
   const pending = login.isPending || register.isPending
-  const error = login.error ?? register.error
+  // Only surface the error for the mode currently shown (avoids a stale login
+  // error masking a registration error, and vice-versa).
+  const activeError = mode === 'login' ? login.error : register.error
+
+  const switchMode = () => {
+    login.reset()
+    register.reset()
+    setMode((m) => (m === 'login' ? 'register' : 'login'))
+  }
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -92,7 +100,7 @@ export function AuthPage() {
               />
             </div>
 
-            {error && <p className="text-sm text-destructive">{error.message}</p>}
+            {activeError && <p className="text-sm text-destructive">{activeError.message}</p>}
 
             <Button type="submit" className="w-full" disabled={pending}>
               {pending ? t('auth.pleaseWait') : mode === 'login' ? t('auth.login') : t('auth.register')}
@@ -103,7 +111,7 @@ export function AuthPage() {
             {mode === 'login' ? t('auth.noAccount') : t('auth.haveAccount')}{' '}
             <button
               type="button"
-              onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+              onClick={switchMode}
               className="font-medium text-primary hover:underline"
             >
               {mode === 'login' ? t('auth.register') : t('auth.login')}

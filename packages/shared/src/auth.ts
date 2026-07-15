@@ -3,7 +3,7 @@ import { z } from 'zod'
 /** Password policy (min length; strength rules can tighten later). */
 export const passwordSchema = z
   .string()
-  .min(10, 'Password must be at least 10 characters')
+  .min(8, 'Password must be at least 8 characters')
   .max(200, 'Password is too long')
 
 export const registerInputSchema = z.object({
