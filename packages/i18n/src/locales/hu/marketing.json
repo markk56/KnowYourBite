@@ -1,0 +1,39 @@
+{
+  "headline": "Minden, amire egy dietetikusnak szüksége van",
+  "subheadline": "A felméréstől az étrenden át az exportig — egyetlen professzionális munkafelület.",
+  "form": {
+    "loginSubtitle": "Add meg az adataidat a munkafelület eléréséhez.",
+    "registerSubtitle": "Hozd létre a szakmai fiókodat a kezdéshez."
+  },
+  "features": {
+    "crm": {
+      "title": "Kliens CRM",
+      "body": "Minden kliens profilja, előzménye és tervei egy helyen."
+    },
+    "assessments": {
+      "title": "Okos felmérések",
+      "body": "Strukturált felmérés AI-támogatott kalória- és makró-javaslatokkal."
+    },
+    "recipes": {
+      "title": "Recepttár",
+      "body": "USDA-alapú receptek pontos, adagonkénti tápértékkel."
+    },
+    "planner": {
+      "title": "Étrendtervezés",
+      "body": "Napi és heti tervek gördülékeny drag-and-drop-pal."
+    },
+    "ai": {
+      "title": "AI asszisztens",
+      "body": "Az AI javasol, te döntesz — minden javaslat szerkeszthető marad."
+    },
+    "pdf": {
+      "title": "Profi exportok",
+      "body": "Márkázott, páciensbarát PDF-ek egy kattintással."
+    }
+  },
+  "badges": {
+    "gdpr": "GDPR-kész",
+    "languages": "EN · RO · HU",
+    "ai": "AI-támogatott"
+  }
+}

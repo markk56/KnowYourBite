@@ -12,7 +12,7 @@ const here = dirname(fileURLToPath(import.meta.url))
 const localesDir = join(here, '..', 'packages', 'i18n', 'src', 'locales')
 
 const LOCALES = ['en', 'ro', 'hu']
-const NAMESPACES = ['common']
+const NAMESPACES = ['common', 'marketing']
 const REFERENCE = 'en'
 
 function leafKeys(obj, prefix = '') {

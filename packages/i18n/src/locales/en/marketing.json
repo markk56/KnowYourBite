@@ -1,0 +1,39 @@
+{
+  "headline": "Everything a dietitian needs",
+  "subheadline": "From intake to meal plan to export — one professional workspace.",
+  "form": {
+    "loginSubtitle": "Enter your credentials to access your workspace.",
+    "registerSubtitle": "Create your professional account to get started."
+  },
+  "features": {
+    "crm": {
+      "title": "Client CRM",
+      "body": "Every client's profile, history, and plans in one workspace."
+    },
+    "assessments": {
+      "title": "Smart Assessments",
+      "body": "Structured intake with AI-assisted energy and macro proposals."
+    },
+    "recipes": {
+      "title": "Recipe Library",
+      "body": "USDA-backed recipes with precise, per-serving nutrition."
+    },
+    "planner": {
+      "title": "Meal Planning",
+      "body": "Build day and week plans with smooth drag-and-drop."
+    },
+    "ai": {
+      "title": "AI Assistant",
+      "body": "AI proposes, you decide — every suggestion stays editable."
+    },
+    "pdf": {
+      "title": "Pro Exports",
+      "body": "Branded, patient-friendly PDFs in one click."
+    }
+  },
+  "badges": {
+    "gdpr": "GDPR-ready",
+    "languages": "EN · RO · HU",
+    "ai": "AI-assisted"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "headline": "Tot ce îi trebuie unui dietetician",
+  "subheadline": "De la evaluare la plan de mese și export — un singur spațiu de lucru profesional.",
+  "form": {
+    "loginSubtitle": "Introdu datele pentru a-ți accesa spațiul de lucru.",
+    "registerSubtitle": "Creează-ți contul profesional pentru a începe."
+  },
+  "features": {
+    "crm": {
+      "title": "CRM clienți",
+      "body": "Profilul, istoricul și planurile fiecărui client într-un singur loc."
+    },
+    "assessments": {
+      "title": "Evaluări inteligente",
+      "body": "Evaluare structurată cu propuneri de calorii și macro asistate de AI."
+    },
+    "recipes": {
+      "title": "Bibliotecă de rețete",
+      "body": "Rețete bazate pe USDA, cu nutriție precisă pe porție."
+    },
+    "planner": {
+      "title": "Planificare mese",
+      "body": "Creează planuri pe zi și săptămână prin drag-and-drop."
+    },
+    "ai": {
+      "title": "Asistent AI",
+      "body": "AI propune, tu decizi — fiecare sugestie rămâne editabilă."
+    },
+    "pdf": {
+      "title": "Exporturi profesionale",
+      "body": "PDF-uri branduite, prietenoase pentru pacient, dintr-un clic."
+    }
+  },
+  "badges": {
+    "gdpr": "Conform GDPR",
+    "languages": "EN · RO · HU",
+    "ai": "Asistat de AI"
+  }
+}
