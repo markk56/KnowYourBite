@@ -60,13 +60,20 @@ settings. See the roadmap.
      are only needed later (M2/M3); leave blank for now.
 4. **Install, create tables, run:** in the Shell:
    ```bash
-   npm install
-   npm run db:push   # creates the users / auth_tokens tables in your Postgres
+   npm install --omit=dev   # runtime deps only; skips test tooling
+   npm run db:push          # creates the users / auth_tokens / clients tables
    npm run dev
    ```
    Open the web preview — you'll land on the branded login/register page.
    Create an account, and you're in the app shell. The server logs
    `Know Your Bite listening on http://localhost:5000`.
+
+   > **Why `--omit=dev` on Replit?** Replit's package firewall blocks some test
+   > tooling (e.g. flagged `vitest` versions). Those are only needed for tests,
+   > which run in GitHub Actions CI — not on the runtime host. Everything needed
+   > to build and run the app lives in `dependencies`, so `--omit=dev` installs a
+   > clean, running app. Run the full test suite locally or in CI with a plain
+   > `npm install`.
 
 ### Verify everything is green
 
