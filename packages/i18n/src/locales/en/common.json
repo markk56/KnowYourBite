@@ -97,7 +97,10 @@
       "noPhone": "No phone",
       "notes": "Notes",
       "noNotes": "No notes yet",
-      "clientSince": "Client since"
+      "clientSince": "Client since",
+      "assessment": "Assessment",
+      "startAssessment": "Start assessment",
+      "viewAssessment": "View assessment"
     },
     "delete": {
       "title": "Delete client?",
@@ -105,6 +108,42 @@
       "confirm": "Delete",
       "cancel": "Cancel",
       "error": "Couldn't delete the client."
+    }
+  },
+  "assessments": {
+    "title": "Anamnesis",
+    "back": "Back to client",
+    "backToForm": "Back to the form",
+    "loading": "Loading assessment…",
+    "startTitle": "No assessment yet",
+    "startBody": "Fill in the {type} anamnesis, then finish with AI.",
+    "start": "Start assessment",
+    "starting": "Starting…",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "finish": "Finish with AI",
+    "finishing": "Analyzing…",
+    "finishError": "Couldn't finish the assessment.",
+    "reviewTitle": "Review & approve",
+    "review": {
+      "deterministic": "Calculated (authoritative)",
+      "bmr": "BMR",
+      "maintenance": "Maintenance TDEE",
+      "deterministicNote": "Computed from the Harris–Benedict equation — this is the source of truth.",
+      "aiTitle": "AI suggestion",
+      "suggestedAdjustment": "Suggested adjustment",
+      "aiNote": "A suggestion for your review — edit the final targets below before approving.",
+      "aiUnavailable": "AI is temporarily unavailable — you can approve the calculated targets or retry.",
+      "aiOff": "AI is turned off — approve the calculated targets below.",
+      "retry": "Retry",
+      "finalTargets": "Final targets",
+      "kcal": "Calories",
+      "protein": "Protein (g)",
+      "carbs": "Carbs (g)",
+      "fat": "Fat (g)",
+      "approve": "Approve targets",
+      "approving": "Approving…",
+      "approveError": "Couldn't approve the targets."
     }
   },
   "sample": {

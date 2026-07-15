@@ -8,6 +8,7 @@ import { DashboardPlaceholder } from '@/pages/DashboardPlaceholder'
 import { AuthPage } from '@/pages/AuthPage'
 import { ClientListPage } from '@/clients/ClientListPage'
 import { ClientDetailPage } from '@/clients/ClientDetailPage'
+import { AssessmentWizard } from '@/assessments/AssessmentWizard'
 import { useCurrentUser } from '@/auth/useAuth'
 
 function ComingSoon({ titleKey }: { titleKey: string }) {
@@ -41,6 +42,7 @@ function Root() {
       <Switch>
         <Route path="/" component={DashboardPlaceholder} />
         <Route path="/clients" component={ClientListPage} />
+        <Route path="/clients/:id/assessment" component={AssessmentWizard} />
         <Route path="/clients/:id" component={ClientDetailPage} />
         <Route path="/recipes">{() => <ComingSoon titleKey="nav.recipes" />}</Route>
         <Route path="/planner">{() => <ComingSoon titleKey="nav.planner" />}</Route>

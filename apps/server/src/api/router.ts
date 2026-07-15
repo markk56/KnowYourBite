@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { ok } from '@kyb/shared'
 import { createAuthRouter } from '../auth/routes'
 import { createClientsRouter } from '../clients/routes'
+import { createAssessmentsRouter } from '../assessments/routes'
 import { requireAuth } from '../middleware/tenant'
 
 /**
@@ -19,6 +20,8 @@ export function createApiRouter(): Router {
   // requireAuth stays at the mount point so every client route is gated and
   // req.tenantId is populated before the handlers run.
   router.use('/clients', requireAuth, createClientsRouter())
+  // Assessments hang off a client: /clients/:clientId/assessments/*
+  router.use('/clients/:clientId/assessments', requireAuth, createAssessmentsRouter())
 
   return router
 }

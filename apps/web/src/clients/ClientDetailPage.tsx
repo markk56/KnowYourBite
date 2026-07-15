@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useParams } from 'wouter'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, Mail, Pencil, Phone, Trash2 } from 'lucide-react'
+import { ArrowLeft, ClipboardList, Mail, Pencil, Phone, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
@@ -114,6 +114,21 @@ export function ClientDetailPage() {
             <Phone className="h-4 w-4 text-muted-foreground" />
             {client.phone ?? <span className="text-muted-foreground">{t('clients.detail.noPhone')}</span>}
           </p>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('clients.detail.assessment')}
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">{t(`clients.status.${client.assessmentStatus}`)}</p>
+          </div>
+          <Button onClick={() => setLocation(`/clients/${client.id}/assessment`)}>
+            <ClipboardList className="h-4 w-4" />
+            {completed ? t('clients.detail.viewAssessment') : t('clients.detail.startAssessment')}
+          </Button>
         </div>
       </div>
 

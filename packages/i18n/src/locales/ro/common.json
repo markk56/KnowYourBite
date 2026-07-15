@@ -97,7 +97,10 @@
       "noPhone": "Fără telefon",
       "notes": "Note",
       "noNotes": "Nicio notă încă",
-      "clientSince": "Client din"
+      "clientSince": "Client din",
+      "assessment": "Evaluare",
+      "startAssessment": "Începe evaluarea",
+      "viewAssessment": "Vezi evaluarea"
     },
     "delete": {
       "title": "Ștergi clientul?",
@@ -105,6 +108,42 @@
       "confirm": "Șterge",
       "cancel": "Anulează",
       "error": "Nu am putut șterge clientul."
+    }
+  },
+  "assessments": {
+    "title": "Anamneză",
+    "back": "Înapoi la client",
+    "backToForm": "Înapoi la formular",
+    "loading": "Se încarcă evaluarea…",
+    "startTitle": "Nicio evaluare încă",
+    "startBody": "Completează anamneza {type}, apoi finalizează cu AI.",
+    "start": "Începe evaluarea",
+    "starting": "Se începe…",
+    "saving": "Se salvează…",
+    "saved": "Salvat",
+    "finish": "Finalizează cu AI",
+    "finishing": "Se analizează…",
+    "finishError": "Nu am putut finaliza evaluarea.",
+    "reviewTitle": "Verifică și aprobă",
+    "review": {
+      "deterministic": "Calculat (autoritar)",
+      "bmr": "Metabolism bazal (BMR)",
+      "maintenance": "TDEE de menținere",
+      "deterministicNote": "Calculat cu ecuația Harris–Benedict — aceasta este sursa de adevăr.",
+      "aiTitle": "Sugestie AI",
+      "suggestedAdjustment": "Ajustare sugerată",
+      "aiNote": "O sugestie pentru verificare — editează țintele finale înainte de aprobare.",
+      "aiUnavailable": "AI este temporar indisponibil — poți aproba țintele calculate sau reîncerca.",
+      "aiOff": "AI este dezactivat — aprobă țintele calculate de mai jos.",
+      "retry": "Reîncearcă",
+      "finalTargets": "Ținte finale",
+      "kcal": "Calorii",
+      "protein": "Proteine (g)",
+      "carbs": "Carbohidrați (g)",
+      "fat": "Grăsimi (g)",
+      "approve": "Aprobă țintele",
+      "approving": "Se aprobă…",
+      "approveError": "Nu am putut aproba țintele."
     }
   },
   "sample": {

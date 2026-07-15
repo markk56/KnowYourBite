@@ -7,8 +7,15 @@ import { idColumn, softDelete, timestamps } from '../columns'
  * forgotten WHERE fails closed and cross-tenant reads resolve to 404.
  */
 export const clientTypeEnum = pgEnum('client_type', ['standard', 'sports'])
-// M1 subset of the canonical assessment_status enum; extended in M2 via ALTER TYPE.
-export const assessmentStatusEnum = pgEnum('assessment_status', ['unfinished', 'completed'])
+// Canonical assessment_status enum (M2 extended the M1 subset via ALTER TYPE ADD
+// VALUE — `db:push` handles it). The `clients` column only ever holds
+// unfinished|completed; `client_assessments.status` uses all four.
+export const assessmentStatusEnum = pgEnum('assessment_status', [
+  'unfinished',
+  'ai_proposed',
+  'completed',
+  'discarded',
+])
 
 export const clients = pgTable(
   'clients',

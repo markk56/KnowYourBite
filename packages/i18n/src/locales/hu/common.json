@@ -97,7 +97,10 @@
       "noPhone": "Nincs telefon",
       "notes": "Jegyzetek",
       "noNotes": "Még nincs jegyzet",
-      "clientSince": "Kliens ekkortól"
+      "clientSince": "Kliens ekkortól",
+      "assessment": "Felmérés",
+      "startAssessment": "Felmérés indítása",
+      "viewAssessment": "Felmérés megtekintése"
     },
     "delete": {
       "title": "Törlöd a klienst?",
@@ -105,6 +108,42 @@
       "confirm": "Törlés",
       "cancel": "Mégse",
       "error": "Nem sikerült törölni a klienst."
+    }
+  },
+  "assessments": {
+    "title": "Anamnézis",
+    "back": "Vissza a klienshez",
+    "backToForm": "Vissza az űrlaphoz",
+    "loading": "Felmérés betöltése…",
+    "startTitle": "Még nincs felmérés",
+    "startBody": "Töltsd ki a(z) {type} anamnézist, majd fejezd be az MI-vel.",
+    "start": "Felmérés indítása",
+    "starting": "Indítás…",
+    "saving": "Mentés…",
+    "saved": "Mentve",
+    "finish": "Befejezés MI-vel",
+    "finishing": "Elemzés…",
+    "finishError": "Nem sikerült befejezni a felmérést.",
+    "reviewTitle": "Áttekintés és jóváhagyás",
+    "review": {
+      "deterministic": "Számított (mérvadó)",
+      "bmr": "Alapanyagcsere (BMR)",
+      "maintenance": "Fenntartó TDEE",
+      "deterministicNote": "A Harris–Benedict képletből számítva — ez a hiteles forrás.",
+      "aiTitle": "MI javaslat",
+      "suggestedAdjustment": "Javasolt módosítás",
+      "aiNote": "Javaslat áttekintésre — jóváhagyás előtt szerkeszd a végleges célokat.",
+      "aiUnavailable": "Az MI átmenetileg nem elérhető — jóváhagyhatod a számított célokat, vagy újrapróbálhatod.",
+      "aiOff": "Az MI ki van kapcsolva — hagyd jóvá az alábbi számított célokat.",
+      "retry": "Újra",
+      "finalTargets": "Végleges célok",
+      "kcal": "Kalória",
+      "protein": "Fehérje (g)",
+      "carbs": "Szénhidrát (g)",
+      "fat": "Zsír (g)",
+      "approve": "Célok jóváhagyása",
+      "approving": "Jóváhagyás…",
+      "approveError": "Nem sikerült jóváhagyni a célokat."
     }
   },
   "sample": {
