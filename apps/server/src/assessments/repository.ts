@@ -73,9 +73,6 @@ function mapDraft(patch: AssessmentDraftInput): Partial<NewClientAssessmentRow> 
   return set
 }
 
-/** Statuses that still permit draft edits / AI proposals. */
-const EDITABLE = ['unfinished', 'ai_proposed'] as const
-
 export const assessmentsRepository = {
   async listForClient(tenantId: string, clientId: string): Promise<ClientAssessmentRow[]> {
     return getDb()

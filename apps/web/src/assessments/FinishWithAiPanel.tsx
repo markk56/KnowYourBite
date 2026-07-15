@@ -5,6 +5,7 @@ import { Sparkles, Check, AlertTriangle, RotateCcw } from 'lucide-react'
 import type { AiDecision, DeterministicTargetsDto, FinishWithAiResult } from '@kyb/shared'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { clientKeys } from '@/clients/queries'
 import { assessmentsApi } from './api'
 import { assessmentKeys } from './queries'
 
@@ -66,6 +67,11 @@ export function FinishWithAiPanel({ clientId, assessmentId, result, onApproved, 
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: assessmentKeys.all(clientId) })
+      // Approving flips the CLIENT's assessmentStatus → 'completed' server-side;
+      // invalidate the client detail/list cache so ClientDetailPage re-renders
+      // with the fresh status/CTA instead of stale (staleTime) 'unfinished'.
+      void qc.invalidateQueries({ queryKey: clientKeys.detail(clientId) })
+      void qc.invalidateQueries({ queryKey: clientKeys.all })
       onApproved()
     },
   })

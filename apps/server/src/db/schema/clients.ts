@@ -7,13 +7,16 @@ import { idColumn, softDelete, timestamps } from '../columns'
  * forgotten WHERE fails closed and cross-tenant reads resolve to 404.
  */
 export const clientTypeEnum = pgEnum('client_type', ['standard', 'sports'])
-// Canonical assessment_status enum (M2 extended the M1 subset via ALTER TYPE ADD
-// VALUE — `db:push` handles it). The `clients` column only ever holds
-// unfinished|completed; `client_assessments.status` uses all four.
+// Canonical assessment_status enum. M1 shipped ['unfinished','completed']; M2
+// appends 'ai_proposed' and 'discarded' AFTER them so `db:push` can express the
+// change as plain ALTER TYPE ... ADD VALUE (append-only — no type recreate).
+// Ordinal order is irrelevant: no code does ordered comparisons on status.
+// The `clients` column only ever holds unfinished|completed;
+// `client_assessments.status` uses all four.
 export const assessmentStatusEnum = pgEnum('assessment_status', [
   'unfinished',
-  'ai_proposed',
   'completed',
+  'ai_proposed',
   'discarded',
 ])
 
