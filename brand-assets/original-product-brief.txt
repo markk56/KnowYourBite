@@ -1,0 +1,239 @@
+Know Your Bite — Meal Planning App (Product Brief, revised)
+Intro — What this app is for
+This app helps dietitians build fast, flexible, and truly personalized meal plans without wrestling with spreadsheets. You create a library of fixed-calorie recipes (each recipe has a precise kcal and macro breakdown). Then you assemble daily plans from recipe blocks to match the client’s goals. The app supports both precision clients (grams, macros, exact methods) and easy-mode clients (hand-measure portions). It also generates smart shopping lists, respects allergies/preferences, and keeps daily macro ratios on target.
+
+Core idea (the heartbeat)
+Fixed-calorie recipe blocks.
+ Every recipe in the library has exact kcal + macros per serving. The planner mixes and matches fixed recipes, to reach the client’s daily targets.
+
+
+Dual recipe format.
+ Each recipe shows grams for accuracy and hand measures for simplicity (e.g., “1 palm chicken (120 g)”).
+
+
+Automatic roll-ups.
+ The app totals daily/weekly calories, macros, fiber, salt, and creates one combined shopping list for ingredients.
+
+
+Real-life filters.
+ Quickly find recipes by time, tools, prep style, dietary needs, budget, cuisine, storage, alergens etc.
+
+
+Plain-language exports.
+ Share plans and lists in HU/RO/EN, printable and phone-friendly.
+
+
+
+Must-have features (plain language)
+1) Tags & Filters (to find the right recipes fast)
+Temperature / usage: needs reheating, oven, cold-friendly / no-reheat (office-friendly).
+
+
+Meal-prep status: keeps 3–4 days, freezable, good next day, easy to box, portionable.
+
+
+Time & difficulty: 10–15 min, 20–30 min, 30-40 min, 50+ min, one-pot, beginner, intermediate.
+
+
+Tools: microwave, oven, pan, pot, pressure cooker, air fryer, blender, “knife & board only”.
+
+
+Context: on-the-go, office lunch, pre/post-workout, breakfast, dinner, snack, lunch.
+
+
+Nutrition goal: IR/PCOS-friendly, high-protein, low-fat, low-carb, high-fiber, low-FODMAP, gluten/dairy/egg-free.
+
+
+Allergens: clear labels + automatic exclusion.
+
+
+Cost & season: budget, mid, premium; seasonal (spring/summer/fall/winter).
+
+
+Cuisine/style: Hungarian, Mediterranean, Asian, Latin, comfort, “fit/classic”, italian, chinese, american, japanese, Thai, Greek.
+
+
+Ingredient logic: leftover-friendly, protein swappable, veg swappable.
+
+
+2) Recipe metadata (so the system can “think”)
+Portions & scaling (1 / 2 / 4 / 6 servings with auto ingredient scaling).
+
+
+Per-serving nutrition: kcal, protein (g), fat (g), carbs (g), fiber (g), salt (g).
+
+
+Dual measures: grams + hand measures (palm/handful/tbsp) together.
+
+
+Shelf life & storage: fridge days, freezer months, thaw/reheat notes.
+
+
+Batch-cook tips: how to cook 6 servings at once and box them.
+
+
+Swap suggestions: if no chicken → turkey/tofu; rice → bulgur/millet (auto-recalc macros).
+
+
+Tags from section 1.
+
+
+3) Smart weekly planner (with macro guardrails)
+Assemble days from fixed-kcal recipes (Breakfast, Snack, Lunch, Dinner are just categories; each chosen recipe has a fixed kcal).
+
+
+Show live daily totals for kcal and macros while you add/swap recipes.
+
+
+Macro guardrails per day and week with target ranges:
+ Fat 25–35%, Protein 20–25%, Carbs 45–60%.
+
+
+Add extra snack (choose any fixed-kcal snack recipe); totals update instantly.
+
+
+Routine-aware filters: e.g., “no microwave”, “max 15 min”, “car-friendly” — planner only suggests matching recipes.
+
+
+Smart repeats: mark recipes to appear 2×/week; planner spreads them and maintains variety (e.g., fish ≤ 3×/week).
+
+
+4) Shopping list (pro and household views)
+Automatic weekly sum across all chosen recipes; merges duplicates (e.g., onion totals round to “1 kg”).
+
+
+Two views:
+
+
+Pro/grams (exact totals, optional cost calc).
+
+
+Household units (pcs/pack/can) for store use.
+
+
+Grouped by store sections: produce, chilled, frozen, dry goods, spices, vegetables, fruits.
+
+
+Local equivalents / RO–HU names: e.g., “brânză cottage / túró”.
+
+
+5) Client profile & auto exclusions
+Preferences: favorites, dislikes, religious/ethical exclusions (fish, beef, pork), available kitchen tools.
+
+
+Allergies/intolerances: automatic filtering when planning.
+
+
+Budget slider: nudges suggestions toward cheaper recipes.
+
+
+6) Education mode (for no-scale clients)
+Portion cards: visual palm/hand/tbsp guides by food group.
+
+
+Swap chart: “≈20 g protein equals …” (chicken ↔ tofu ↔ cottage cheese) with gram values.
+
+
+Hunger-brakes: add small fiber-rich snack recipes (fixed 50–100 kcal options).
+
+
+7) Quality & analytics (safety nets)
+Health limits: warn if salt > 5 g/day or fiber < 25 g/day, etc.
+
+
+Variety meter: flag over-repetition of the same protein (unless intended).
+
+
+Client feedback: “too fussy”, “ate half”, “loved it” → improve future suggestions.
+
+
+8) Export & sharing
+Multi-language exports (HU / RO / EN) for recipes, shopping lists, and weekly overviews.
+
+
+Formats: printable PDF, shareable link, WhatsApp-friendly short list.
+
+
+Views: Day view (with timings) and Week view (at-a-glance).
+
+
+Two recipe outputs:
+
+
+Precision (grams, macros, exact steps).
+
+
+Easy-mode (hand measures highlighted, simple steps).
+
+
+
+Day-to-day flow (simple)
+Build the recipe library once (fixed kcal + macros, grams + hand measures, tags).
+
+
+Plan a client’s day/week by choosing fixed-kcal recipes for Breakfast/Snack/Lunch/Dinner.
+
+
+Watch macro % update live until you’re within targets.
+
+
+Add or swap a recipe (e.g., extra snack) — totals update instantly.
+
+
+Export the plan (precision or easy-mode) and the shopping list (pro or household).
+
+
+Collect feedback; the app learns to suggest better next time.
+
+
+
+Minimal recipe schema (content fields)
+Name
+
+
+Category (Breakfast / Snack / Lunch / Dinner)
+
+
+Tags (section 1)
+
+
+Ingredients: grams + (hand measure in brackets)
+
+
+e.g., “Chicken breast 120 g (1 palm)”
+
+
+Method (include batch-cook and reheating notes if relevant)
+
+
+Per-serving nutrition: kcal, Protein g, Fat g, Carbs g, Fiber g, Salt g
+
+
+Storage & shelf life (fridge/freezer + how to reheat)
+
+
+Swap options (auto macro update)
+
+
+Allergens (explicit)
+
+
+
+Why this matters (benefits)
+Faster planning: build from fixed-kcal recipe blocks, not from scratch.
+
+
+Flexible for real life: easy swaps, repeats, add-a-snack, and strong filters.
+
+
+Fits all client types: precision (grams/macros) and simplicity (hand measures) in one flow.
+
+
+Professional output: clear bilingual recipes and tidy shopping lists.
+
+
+Safer & smarter: macro guardrails, fiber/salt checks, and learning from feedback.
+
+
+
+

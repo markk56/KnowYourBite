@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Required merge gate (IMPLEMENTATION-ROADMAP.md M0.3): typecheck, lint, i18n
+# parity, unit/integration tests, build, and the E2E smoke must all pass.
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      # Dummy values so the fail-fast env schema is satisfied. The M0 skeleton
+      # does not connect to the DB; real secrets are configured on Replit.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/kyb_ci
+      SESSION_SECRET: ci-only-session-secret-at-least-32-characters
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Uses `npm install` because the lockfile is generated on first install.
+      # Switch to `npm ci` once package-lock.json is committed.
+      - run: npm install --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: i18n key parity
+        run: npm run i18n:check
+
+      - name: Unit & integration tests
+        run: npm run test
+
+      - name: Build client
+        run: npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E smoke
+        run: npm run test:e2e

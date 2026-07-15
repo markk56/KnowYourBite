@@ -1,0 +1,38 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# builds
+dist/
+build/
+apps/web/dist/
+apps/server/dist/
+*.tsbuildinfo
+
+# test / coverage
+coverage/
+playwright-report/
+test-results/
+.vitest/
+
+# env & secrets
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# local backup of the old codebase (kept locally, not pushed to Replit)
+Replit Exports/
+
+# scratch
+scratchpad/

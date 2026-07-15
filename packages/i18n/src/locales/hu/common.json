@@ -1,0 +1,113 @@
+{
+  "app": {
+    "name": "Know Your Bite",
+    "tagline": "Dietetikus platform"
+  },
+  "nav": {
+    "dashboard": "Vezérlőpult",
+    "clients": "Kliensek",
+    "recipes": "Receptek",
+    "planner": "Étrendtervező",
+    "settings": "Beállítások",
+    "comingSoon": "Hamarosan"
+  },
+  "actions": {
+    "toggleTheme": "Téma váltása",
+    "language": "Nyelv"
+  },
+  "theme": {
+    "light": "Világos",
+    "dark": "Sötét"
+  },
+  "language": {
+    "en": "English",
+    "ro": "Română",
+    "hu": "Magyar"
+  },
+  "shell": {
+    "welcomeTitle": "Üdvözöl a Know Your Bite",
+    "welcomeBody": "A professzionális munkafelület alapja készen áll. A modulok ezután jönnek."
+  },
+  "auth": {
+    "loginTitle": "Bejelentkezés",
+    "registerTitle": "Fiók létrehozása",
+    "login": "Bejelentkezés",
+    "register": "Fiók létrehozása",
+    "email": "E-mail",
+    "password": "Jelszó",
+    "fullName": "Teljes név",
+    "noAccount": "Nincs még fiókod?",
+    "haveAccount": "Van már fiókod?",
+    "pleaseWait": "Kérlek várj…",
+    "logout": "Kijelentkezés",
+    "loading": "Betöltés…"
+  },
+  "clients": {
+    "title": "Kliensek",
+    "new": "Új kliens",
+    "searchPlaceholder": "Keresés név vagy email alapján",
+    "count": "{count, plural, one {# kliens} other {# kliens}}",
+    "loadError": "Nem sikerült betölteni a klienseket.",
+    "loading": "Kliensek betöltése…",
+    "filter": {
+      "all": "Minden típus"
+    },
+    "type": {
+      "label": "Kliens típusa",
+      "standard": "Standard",
+      "sports": "Sport"
+    },
+    "status": {
+      "label": "Felmérés",
+      "unfinished": "Felmérés függőben",
+      "completed": "Felmérés kész"
+    },
+    "empty": {
+      "title": "Még nincs kliens",
+      "body": "Add hozzá az első klienst a kezdéshez.",
+      "cta": "Új kliens"
+    },
+    "emptySearch": {
+      "title": "Nincs találat",
+      "body": "Egy kliens sem felel meg a keresésnek."
+    },
+    "form": {
+      "createTitle": "Új kliens",
+      "editTitle": "Kliens szerkesztése",
+      "fullName": "Teljes név",
+      "email": "Email",
+      "phone": "Telefon",
+      "clientType": "Kliens típusa",
+      "clientSince": "Kliens ekkortól",
+      "notes": "Jegyzetek",
+      "create": "Kliens létrehozása",
+      "save": "Módosítások mentése",
+      "cancel": "Mégse",
+      "saving": "Mentés…",
+      "saveError": "Nem sikerült menteni a klienst.",
+      "required": "A név kötelező"
+    },
+    "detail": {
+      "back": "Vissza a kliensekhez",
+      "edit": "Szerkesztés",
+      "delete": "Törlés",
+      "notFound": "Kliens nem található",
+      "contact": "Elérhetőség",
+      "noEmail": "Nincs email",
+      "noPhone": "Nincs telefon",
+      "notes": "Jegyzetek",
+      "noNotes": "Még nincs jegyzet",
+      "clientSince": "Kliens ekkortól"
+    },
+    "delete": {
+      "title": "Törlöd a klienst?",
+      "body": "Ez eltávolítja őt ({name}) a klienslistádról.",
+      "confirm": "Törlés",
+      "cancel": "Mégse",
+      "error": "Nem sikerült törölni a klienst."
+    }
+  },
+  "sample": {
+    "clientCount": "{count, plural, one {# kliens} other {# kliens}}"
+  }
+}

@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+coverage
+playwright-report
+test-results
+package-lock.json
+# Large generated design/architecture docs — kept verbatim, not reformatted
+ARCHITECTURE.md
+IMPLEMENTATION-ROADMAP.md
+Claude - Know Your Bite Design Protocol.md
+Replit Exports
+brand-assets

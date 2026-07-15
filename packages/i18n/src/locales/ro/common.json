@@ -1,0 +1,113 @@
+{
+  "app": {
+    "name": "Know Your Bite",
+    "tagline": "Platformă pentru dieteticieni"
+  },
+  "nav": {
+    "dashboard": "Panou",
+    "clients": "Clienți",
+    "recipes": "Rețete",
+    "planner": "Planificator de mese",
+    "settings": "Setări",
+    "comingSoon": "În curând"
+  },
+  "actions": {
+    "toggleTheme": "Comută tema",
+    "language": "Limbă"
+  },
+  "theme": {
+    "light": "Luminos",
+    "dark": "Întunecat"
+  },
+  "language": {
+    "en": "English",
+    "ro": "Română",
+    "hu": "Magyar"
+  },
+  "shell": {
+    "welcomeTitle": "Bine ai venit în Know Your Bite",
+    "welcomeBody": "Fundația spațiului tău de lucru profesional este gata. Modulele urmează."
+  },
+  "auth": {
+    "loginTitle": "Autentificare",
+    "registerTitle": "Creează-ți contul",
+    "login": "Autentificare",
+    "register": "Creează cont",
+    "email": "Email",
+    "password": "Parolă",
+    "fullName": "Nume complet",
+    "noAccount": "Nu ai un cont?",
+    "haveAccount": "Ai deja un cont?",
+    "pleaseWait": "Te rugăm să aștepți…",
+    "logout": "Deconectare",
+    "loading": "Se încarcă…"
+  },
+  "clients": {
+    "title": "Clienți",
+    "new": "Client nou",
+    "searchPlaceholder": "Caută după nume sau email",
+    "count": "{count, plural, one {# client} few {# clienți} other {# de clienți}}",
+    "loadError": "Nu am putut încărca clienții.",
+    "loading": "Se încarcă clienții…",
+    "filter": {
+      "all": "Toate tipurile"
+    },
+    "type": {
+      "label": "Tip client",
+      "standard": "Standard",
+      "sports": "Sportiv"
+    },
+    "status": {
+      "label": "Evaluare",
+      "unfinished": "Evaluare în așteptare",
+      "completed": "Evaluare finalizată"
+    },
+    "empty": {
+      "title": "Niciun client încă",
+      "body": "Adaugă primul client pentru a începe.",
+      "cta": "Client nou"
+    },
+    "emptySearch": {
+      "title": "Niciun rezultat",
+      "body": "Niciun client nu corespunde căutării."
+    },
+    "form": {
+      "createTitle": "Client nou",
+      "editTitle": "Editează clientul",
+      "fullName": "Nume complet",
+      "email": "Email",
+      "phone": "Telefon",
+      "clientType": "Tip client",
+      "clientSince": "Client din",
+      "notes": "Note",
+      "create": "Creează client",
+      "save": "Salvează modificările",
+      "cancel": "Anulează",
+      "saving": "Se salvează…",
+      "saveError": "Nu am putut salva clientul.",
+      "required": "Numele este obligatoriu"
+    },
+    "detail": {
+      "back": "Înapoi la clienți",
+      "edit": "Editează",
+      "delete": "Șterge",
+      "notFound": "Client negăsit",
+      "contact": "Contact",
+      "noEmail": "Fără email",
+      "noPhone": "Fără telefon",
+      "notes": "Note",
+      "noNotes": "Nicio notă încă",
+      "clientSince": "Client din"
+    },
+    "delete": {
+      "title": "Ștergi clientul?",
+      "body": "Aceasta elimină {name} din lista ta de clienți.",
+      "confirm": "Șterge",
+      "cancel": "Anulează",
+      "error": "Nu am putut șterge clientul."
+    }
+  },
+  "sample": {
+    "clientCount": "{count, plural, one {# client} few {# clienți} other {# de clienți}}"
+  }
+}

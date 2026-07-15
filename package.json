@@ -1,0 +1,61 @@
+{
+  "name": "know-your-bite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20 <21"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development tsx watch apps/server/src/index.ts",
+    "build": "npm run build --workspace @kyb/web",
+    "start": "cross-env NODE_ENV=production tsx apps/server/src/index.ts",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "i18n:check": "node scripts/i18n-guard.mjs",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "check": "npm run typecheck && npm run lint && npm run i18n:check && npm run test",
+    "prepare": "husky || true"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "tsx": "^4.19.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^20.17.10",
+    "@vitest/coverage-v8": "^2.1.8",
+    "drizzle-kit": "^0.30.1",
+    "eslint": "^9.17.0",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vitest": "^2.1.8"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,json,css,md}": "prettier --write",
+    "*.{ts,tsx}": "eslint --fix"
+  }
+}

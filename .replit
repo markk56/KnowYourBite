@@ -1,0 +1,45 @@
+# Replit configuration — Know Your Bite (Reserved VM target)
+# See ARCHITECTURE.md §6 and IMPLEMENTATION-ROADMAP.md M0.1 for rationale.
+
+run = "npm run dev"
+entrypoint = "apps/server/src/index.ts"
+modules = ["nodejs-20", "postgresql-16"]
+
+hidden = [".config", "node_modules", "dist", "coverage"]
+
+[nix]
+channel = "stable-24_05"
+
+[env]
+NODE_ENV = "development"
+
+# Single external port: the Express server (5000) serves the API and, via Vite
+# middleware in dev / static files in prod, the React client. Maps to public :80.
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[deployment]
+# Reserved VM (always-on single instance) — locked in ADR-000 §11 / decision D3.
+# NODE_ENV is intentionally NOT set here: the `start` script sets it via
+# cross-env, and setting it globally would make the deploy `npm install` skip
+# devDependencies (vite/typescript), breaking `npm run build`.
+deploymentTarget = "vm"
+build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
+
+[workflows]
+
+[[workflows.workflow]]
+name = "Dev"
+mode = "sequential"
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Checks (typecheck + lint + i18n + tests)"
+mode = "sequential"
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run check"

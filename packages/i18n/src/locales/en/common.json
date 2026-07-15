@@ -1,0 +1,113 @@
+{
+  "app": {
+    "name": "Know Your Bite",
+    "tagline": "Dietitian Platform"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "clients": "Clients",
+    "recipes": "Recipes",
+    "planner": "Meal Planner",
+    "settings": "Settings",
+    "comingSoon": "Coming soon"
+  },
+  "actions": {
+    "toggleTheme": "Toggle theme",
+    "language": "Language"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "en": "English",
+    "ro": "Română",
+    "hu": "Magyar"
+  },
+  "shell": {
+    "welcomeTitle": "Welcome to Know Your Bite",
+    "welcomeBody": "Your professional workspace foundation is ready. Product modules land next."
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "registerTitle": "Create your account",
+    "login": "Sign in",
+    "register": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "pleaseWait": "Please wait…",
+    "logout": "Sign out",
+    "loading": "Loading…"
+  },
+  "clients": {
+    "title": "Clients",
+    "new": "New client",
+    "searchPlaceholder": "Search by name or email",
+    "count": "{count, plural, one {# client} other {# clients}}",
+    "loadError": "Couldn't load clients.",
+    "loading": "Loading clients…",
+    "filter": {
+      "all": "All types"
+    },
+    "type": {
+      "label": "Client type",
+      "standard": "Standard",
+      "sports": "Sports"
+    },
+    "status": {
+      "label": "Assessment",
+      "unfinished": "Assessment pending",
+      "completed": "Assessment complete"
+    },
+    "empty": {
+      "title": "No clients yet",
+      "body": "Add your first client to get started.",
+      "cta": "New client"
+    },
+    "emptySearch": {
+      "title": "No matches",
+      "body": "No clients match your search."
+    },
+    "form": {
+      "createTitle": "New client",
+      "editTitle": "Edit client",
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "clientType": "Client type",
+      "clientSince": "Client since",
+      "notes": "Notes",
+      "create": "Create client",
+      "save": "Save changes",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "saveError": "Couldn't save the client.",
+      "required": "Name is required"
+    },
+    "detail": {
+      "back": "Back to clients",
+      "edit": "Edit",
+      "delete": "Delete",
+      "notFound": "Client not found",
+      "contact": "Contact",
+      "noEmail": "No email",
+      "noPhone": "No phone",
+      "notes": "Notes",
+      "noNotes": "No notes yet",
+      "clientSince": "Client since"
+    },
+    "delete": {
+      "title": "Delete client?",
+      "body": "This removes {name} from your client list.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "error": "Couldn't delete the client."
+    }
+  },
+  "sample": {
+    "clientCount": "{count, plural, one {# client} other {# clients}}"
+  }
+}
