@@ -43,3 +43,6 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run check"
+
+[agent]
+expertMode = true
