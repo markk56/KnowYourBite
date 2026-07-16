@@ -281,6 +281,92 @@
       "download": "Download PDF"
     }
   },
+  "planner": {
+    "title": "Meal Plans",
+    "new": "New plan",
+    "loading": "Loading meal plans…",
+    "loadError": "Couldn't load meal plans.",
+    "empty": {
+      "title": "No meal plans yet",
+      "body": "Create a plan for a client to get started.",
+      "cta": "New plan"
+    },
+    "status": {
+      "draft": "Draft",
+      "complete": "Complete",
+      "exported": "Exported",
+      "reopened": "Reopened"
+    },
+    "period": {
+      "day": "Single day",
+      "week": "Week"
+    },
+    "list": {
+      "entryCount": "{count, plural, one {# meal} other {# meals}}",
+      "targetKcal": "{kcal} kcal target"
+    },
+    "create": {
+      "title": "New meal plan",
+      "client": "Client",
+      "selectClient": "Select a client…",
+      "clientRequired": "Choose a client.",
+      "planTitle": "Plan name",
+      "titleRequired": "A plan name is required.",
+      "titlePlaceholder": "e.g. Week 1",
+      "period": "Period",
+      "error": "Couldn't create the plan.",
+      "cancel": "Cancel",
+      "creating": "Creating…",
+      "submit": "Create plan"
+    },
+    "macro": {
+      "kcal": "Energy (kcal)",
+      "proteinG": "Protein (g)",
+      "carbsG": "Carbs (g)",
+      "fatG": "Fat (g)"
+    },
+    "dashboard": {
+      "dayTitle": "This day",
+      "weekTitle": "Week summary",
+      "weekTotal": "Week total",
+      "dayAverage": "Daily average",
+      "noTarget": "No target set — complete an assessment to compare against goals."
+    },
+    "palette": {
+      "title": "Recipes",
+      "search": "Search recipes…",
+      "hint": "Drag a recipe into a meal, or focus one and press space to move it by keyboard.",
+      "loading": "Loading recipes…",
+      "empty": "No recipes found."
+    },
+    "extra": {
+      "title": "Add food to {window}",
+      "search": "Search USDA foods…"
+    },
+    "entry": {
+      "drag": "Reorder meal",
+      "missing": "Recipe deleted — remove this item",
+      "kcal": "{kcal} kcal",
+      "remove": "Remove",
+      "multiplier": "Servings"
+    },
+    "window": {
+      "remove": "Remove meal",
+      "dropHint": "Drop a recipe here",
+      "addFood": "Add food",
+      "add": "Add meal",
+      "name": "Meal name",
+      "namePlaceholder": "e.g. Afternoon snack",
+      "time": "Time",
+      "create": "Add"
+    },
+    "editor": {
+      "back": "Back to meal plans",
+      "days": "Days",
+      "day": "Day {n}",
+      "noDays": "This plan has no days."
+    }
+  },
   "sample": {
     "clientCount": "{count, plural, one {# client} other {# clients}}"
   }

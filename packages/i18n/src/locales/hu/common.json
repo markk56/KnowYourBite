@@ -281,6 +281,92 @@
       "download": "PDF letöltése"
     }
   },
+  "planner": {
+    "title": "Étrendek",
+    "new": "Új étrend",
+    "loading": "Étrendek betöltése…",
+    "loadError": "Nem sikerült betölteni az étrendeket.",
+    "empty": {
+      "title": "Még nincs étrend",
+      "body": "Hozz létre egy étrendet egy ügyfélhez a kezdéshez.",
+      "cta": "Új étrend"
+    },
+    "status": {
+      "draft": "Piszkozat",
+      "complete": "Kész",
+      "exported": "Exportálva",
+      "reopened": "Újranyitva"
+    },
+    "period": {
+      "day": "Egy nap",
+      "week": "Hét"
+    },
+    "list": {
+      "entryCount": "{count, plural, one {# étkezés} other {# étkezés}}",
+      "targetKcal": "{kcal} kcal cél"
+    },
+    "create": {
+      "title": "Új étrend",
+      "client": "Ügyfél",
+      "selectClient": "Válassz ügyfelet…",
+      "clientRequired": "Válassz egy ügyfelet.",
+      "planTitle": "Étrend neve",
+      "titleRequired": "Az étrend neve kötelező.",
+      "titlePlaceholder": "pl. 1. hét",
+      "period": "Időszak",
+      "error": "Nem sikerült létrehozni az étrendet.",
+      "cancel": "Mégse",
+      "creating": "Létrehozás…",
+      "submit": "Étrend létrehozása"
+    },
+    "macro": {
+      "kcal": "Energia (kcal)",
+      "proteinG": "Fehérje (g)",
+      "carbsG": "Szénhidrát (g)",
+      "fatG": "Zsír (g)"
+    },
+    "dashboard": {
+      "dayTitle": "Ez a nap",
+      "weekTitle": "Heti összegzés",
+      "weekTotal": "Heti összesen",
+      "dayAverage": "Napi átlag",
+      "noTarget": "Nincs cél megadva – végezz el egy felmérést a célokkal való összevetéshez."
+    },
+    "palette": {
+      "title": "Receptek",
+      "search": "Receptek keresése…",
+      "hint": "Húzz egy receptet egy étkezésbe, vagy jelöld ki és nyomd meg a szóközt a billentyűzetes mozgatáshoz.",
+      "loading": "Receptek betöltése…",
+      "empty": "Nincs találat."
+    },
+    "extra": {
+      "title": "Étel hozzáadása ehhez: {window}",
+      "search": "USDA élelmiszerek keresése…"
+    },
+    "entry": {
+      "drag": "Étkezés átrendezése",
+      "missing": "A recept törölve – távolítsd el ezt az elemet",
+      "kcal": "{kcal} kcal",
+      "remove": "Eltávolítás",
+      "multiplier": "Adagok"
+    },
+    "window": {
+      "remove": "Étkezés eltávolítása",
+      "dropHint": "Húzz ide egy receptet",
+      "addFood": "Étel hozzáadása",
+      "add": "Étkezés hozzáadása",
+      "name": "Étkezés neve",
+      "namePlaceholder": "pl. Délutáni uzsonna",
+      "time": "Időpont",
+      "create": "Hozzáadás"
+    },
+    "editor": {
+      "back": "Vissza az étrendekhez",
+      "days": "Napok",
+      "day": "{n}. nap",
+      "noDays": "Ennek az étrendnek nincsenek napjai."
+    }
+  },
   "sample": {
     "clientCount": "{count, plural, one {# kliens} other {# kliens}}"
   }

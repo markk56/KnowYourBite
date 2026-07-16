@@ -281,6 +281,92 @@
       "download": "Descarcă PDF"
     }
   },
+  "planner": {
+    "title": "Planuri de masă",
+    "new": "Plan nou",
+    "loading": "Se încarcă planurile…",
+    "loadError": "Nu am putut încărca planurile.",
+    "empty": {
+      "title": "Niciun plan încă",
+      "body": "Creează un plan pentru un client ca să începi.",
+      "cta": "Plan nou"
+    },
+    "status": {
+      "draft": "Ciornă",
+      "complete": "Finalizat",
+      "exported": "Exportat",
+      "reopened": "Redeschis"
+    },
+    "period": {
+      "day": "O zi",
+      "week": "Săptămână"
+    },
+    "list": {
+      "entryCount": "{count, plural, one {# masă} few {# mese} other {# de mese}}",
+      "targetKcal": "țintă {kcal} kcal"
+    },
+    "create": {
+      "title": "Plan de masă nou",
+      "client": "Client",
+      "selectClient": "Alege un client…",
+      "clientRequired": "Alege un client.",
+      "planTitle": "Numele planului",
+      "titleRequired": "Numele planului este obligatoriu.",
+      "titlePlaceholder": "ex. Săptămâna 1",
+      "period": "Perioadă",
+      "error": "Nu am putut crea planul.",
+      "cancel": "Anulează",
+      "creating": "Se creează…",
+      "submit": "Creează planul"
+    },
+    "macro": {
+      "kcal": "Energie (kcal)",
+      "proteinG": "Proteine (g)",
+      "carbsG": "Carbohidrați (g)",
+      "fatG": "Grăsimi (g)"
+    },
+    "dashboard": {
+      "dayTitle": "Această zi",
+      "weekTitle": "Rezumat săptămânal",
+      "weekTotal": "Total săptămână",
+      "dayAverage": "Media zilnică",
+      "noTarget": "Nicio țintă setată – finalizează o evaluare pentru a compara cu obiectivele."
+    },
+    "palette": {
+      "title": "Rețete",
+      "search": "Caută rețete…",
+      "hint": "Trage o rețetă într-o masă sau selecteaz-o și apasă spațiu pentru a o muta din tastatură.",
+      "loading": "Se încarcă rețetele…",
+      "empty": "Nicio rețetă găsită."
+    },
+    "extra": {
+      "title": "Adaugă aliment la {window}",
+      "search": "Caută alimente USDA…"
+    },
+    "entry": {
+      "drag": "Reordonează masa",
+      "missing": "Rețetă ștearsă – elimină acest element",
+      "kcal": "{kcal} kcal",
+      "remove": "Elimină",
+      "multiplier": "Porții"
+    },
+    "window": {
+      "remove": "Elimină masa",
+      "dropHint": "Trage o rețetă aici",
+      "addFood": "Adaugă aliment",
+      "add": "Adaugă masă",
+      "name": "Numele mesei",
+      "namePlaceholder": "ex. Gustare de după-amiază",
+      "time": "Ora",
+      "create": "Adaugă"
+    },
+    "editor": {
+      "back": "Înapoi la planuri",
+      "days": "Zile",
+      "day": "Ziua {n}",
+      "noDays": "Acest plan nu are zile."
+    }
+  },
   "sample": {
     "clientCount": "{count, plural, one {# client} few {# clienți} other {# de clienți}}"
   }

@@ -4,6 +4,7 @@ import { createAuthRouter } from '../auth/routes'
 import { createClientsRouter } from '../clients/routes'
 import { createAssessmentsRouter } from '../assessments/routes'
 import { createRecipesRouter } from '../recipes/routes'
+import { createMealPlansRouter } from '../mealPlans/routes'
 import { createUsdaRouter } from '../usda/routes'
 import { requireAuth } from '../middleware/tenant'
 
@@ -27,6 +28,8 @@ export function createApiRouter(): Router {
   // Recipe library + USDA reference (Milestone 3).
   router.use('/usda', requireAuth, createUsdaRouter())
   router.use('/recipes', requireAuth, createRecipesRouter())
+  // Meal planning (Milestone 4) — the flagship module.
+  router.use('/meal-plans', requireAuth, createMealPlansRouter())
 
   return router
 }
