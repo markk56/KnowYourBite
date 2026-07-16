@@ -67,6 +67,7 @@ describe('ClientListPage', () => {
       expect(screen.getByText('Alice Anderson')).toBeInTheDocument()
       expect(screen.getByText('Bob Runner')).toBeInTheDocument()
     })
-    expect(screen.getByText('Sports')).toBeInTheDocument()
+    // 'Sports' appears both as a filter <option> and as the card's type label.
+    expect(screen.getAllByText('Sports').length).toBeGreaterThanOrEqual(2)
   })
 })

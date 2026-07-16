@@ -18,7 +18,9 @@ export function toClientDto(row: ClientRow): ClientDto {
     phone: row.phone,
     clientType: row.clientType,
     clientSince: row.clientSince,
-    assessmentStatus: row.assessmentStatus,
+    // Invariant: the clients column only ever holds unfinished|completed
+    // (see db/schema/clients.ts); narrow the wider enum for the M1 wire DTO.
+    assessmentStatus: row.assessmentStatus === 'completed' ? 'completed' : 'unfinished',
     avatarUrl: row.avatarUrl,
     notes: row.notes,
     createdAt: row.createdAt.toISOString(),

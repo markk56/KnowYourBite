@@ -35,7 +35,7 @@ export const MAX_CALORIE_ADJUSTMENT_PERCENT = 30
 
 /** Clamp a (possibly AI-proposed) calorie adjustment into the safe band. */
 export function clampCalorieAdjustmentPercent(pct: number): number {
-  if (!Number.isFinite(pct)) return 0
+  if (Number.isNaN(pct)) return 0
   return Math.max(-MAX_CALORIE_ADJUSTMENT_PERCENT, Math.min(MAX_CALORIE_ADJUSTMENT_PERCENT, pct))
 }
 

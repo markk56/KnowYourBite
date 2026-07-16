@@ -24,19 +24,23 @@ export function Dialog({ open, onClose, title, children, className }: DialogProp
   if (!open) return null
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop: a real button so close-on-backdrop is keyboard accessible. */}
+      <button
+        type="button"
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute inset-0 h-full w-full cursor-default bg-black/50"
+        tabIndex={-1}
+      />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
         className={cn(
-          'w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-lg',
+          'relative w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-lg',
           className,
         )}
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-foreground">{title}</h2>

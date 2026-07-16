@@ -13,8 +13,6 @@ channel = "stable-24_05"
 [env]
 NODE_ENV = "development"
 
-# Single external port: the Express server (5000) serves the API and, via Vite
-# middleware in dev / static files in prod, the React client. Maps to public :80.
 [[ports]]
 localPort = 5000
 externalPort = 80
@@ -43,3 +41,6 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run check"
+
+[agent]
+expertMode = true

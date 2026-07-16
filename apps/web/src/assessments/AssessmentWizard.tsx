@@ -167,7 +167,12 @@ function DraftEditor({
     if (timer.current) clearTimeout(timer.current)
     timer.current = setTimeout(() => save.mutate(toDraft(next)), 800)
   }
-  useEffect(() => () => timer.current !== null && clearTimeout(timer.current), [])
+  useEffect(
+    () => () => {
+      if (timer.current !== null) clearTimeout(timer.current)
+    },
+    [],
+  )
 
   const getValue = (field: AssessmentField): string =>
     field.bind ? values[field.bind] : (values.payload[field.key] ?? '')
