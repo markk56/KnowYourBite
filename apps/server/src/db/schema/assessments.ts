@@ -107,6 +107,7 @@ export const aiInteractions = pgTable(
     tenantId: uuid('tenant_id').notNull(),
     clientId: uuid('client_id'),
     assessmentId: uuid('assessment_id'),
+    recipeId: uuid('recipe_id'), // M3: recipe-scoped features (allergen suggestion) audit here too.
     feature: aiFeatureEnum('feature').notNull(),
     model: text('model').notNull(),
     promptVersion: text('prompt_version'),

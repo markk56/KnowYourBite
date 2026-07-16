@@ -15,7 +15,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { path: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard, ready: true },
   { path: '/clients', labelKey: 'nav.clients', icon: Users, ready: true },
-  { path: '/recipes', labelKey: 'nav.recipes', icon: BookOpen, ready: false },
+  { path: '/recipes', labelKey: 'nav.recipes', icon: BookOpen, ready: true },
   { path: '/planner', labelKey: 'nav.planner', icon: CalendarDays, ready: false },
   { path: '/settings', labelKey: 'nav.settings', icon: Settings, ready: false },
 ]

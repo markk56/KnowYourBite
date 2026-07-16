@@ -9,6 +9,8 @@ import { AuthPage } from '@/pages/AuthPage'
 import { ClientListPage } from '@/clients/ClientListPage'
 import { ClientDetailPage } from '@/clients/ClientDetailPage'
 import { AssessmentWizard } from '@/assessments/AssessmentWizard'
+import { RecipeListPage } from '@/recipes/RecipeListPage'
+import { RecipeEditorPage, RecipeCreatePage } from '@/recipes/RecipeEditorPage'
 import { useCurrentUser } from '@/auth/useAuth'
 
 function ComingSoon({ titleKey }: { titleKey: string }) {
@@ -44,7 +46,9 @@ function Root() {
         <Route path="/clients" component={ClientListPage} />
         <Route path="/clients/:id/assessment" component={AssessmentWizard} />
         <Route path="/clients/:id" component={ClientDetailPage} />
-        <Route path="/recipes">{() => <ComingSoon titleKey="nav.recipes" />}</Route>
+        <Route path="/recipes" component={RecipeListPage} />
+        <Route path="/recipes/new" component={RecipeCreatePage} />
+        <Route path="/recipes/:id" component={RecipeEditorPage} />
         <Route path="/planner">{() => <ComingSoon titleKey="nav.planner" />}</Route>
         <Route path="/settings">{() => <ComingSoon titleKey="nav.settings" />}</Route>
         <Route>{() => <ComingSoon titleKey="nav.dashboard" />}</Route>

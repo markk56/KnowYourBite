@@ -146,6 +146,140 @@
       "approveError": "Nem sikerült jóváhagyni a célokat."
     }
   },
+  "recipes": {
+    "title": "Receptek",
+    "new": "Új recept",
+    "searchPlaceholder": "Receptek keresése cím szerint",
+    "loading": "Receptek betöltése…",
+    "loadError": "Nem sikerült betölteni a recepteket.",
+    "filter": {
+      "category": "Kategória",
+      "allCategories": "Minden kategória",
+      "excludeAllergens": "Allergének kizárása"
+    },
+    "empty": {
+      "title": "Még nincs recept",
+      "body": "Hozd létre az első recepted a kezdéshez.",
+      "cta": "Új recept"
+    },
+    "emptySearch": {
+      "title": "Nincs találat",
+      "body": "Nincs a szűrőknek megfelelő recept."
+    },
+    "card": {
+      "servings": "{count, plural, one {# adag} other {# adag}}",
+      "kcalPerServing": "kcal / adag",
+      "noNutrition": "Még nincs hozzávaló"
+    },
+    "allergen": {
+      "milk": "Tej",
+      "gluten": "Glutén",
+      "eggs": "Tojás",
+      "peanuts": "Földimogyoró",
+      "soy": "Szója",
+      "tree_nuts": "Diófélék",
+      "shellfish": "Rákfélék"
+    },
+    "nutrition": {
+      "nutrient": "Tápanyag",
+      "perServing": "Adagonként",
+      "total": "Összesen",
+      "kcal": "Energia (kcal)",
+      "protein": "Fehérje (g)",
+      "carbs": "Szénhidrát (g)",
+      "fat": "Zsír (g)",
+      "fiber": "Rost (g)",
+      "salt": "Só (g)"
+    },
+    "ingredients": {
+      "searchPlaceholder": "USDA élelmiszerek keresése…",
+      "branded": "Márkás termékek",
+      "degraded": "Gyorsítótárazott találatok — az USDA átmenetileg nem elérhető.",
+      "noResults": "Nincs találat.",
+      "amount": "Mennyiség",
+      "unit": "Egység",
+      "density": "Sűrűség (g/ml)",
+      "gramsPerPiece": "Gramm / darab",
+      "add": "Hozzáadás",
+      "addError": "Nem sikerült hozzáadni a hozzávalót.",
+      "editAmount": "Mennyiség szerkesztése",
+      "remove": "Eltávolítás"
+    },
+    "allergens": {
+      "none": "Még nincs jelölt allergén.",
+      "confirmed": "Megerősítve",
+      "confirm": "Megerősítés",
+      "unconfirm": "Visszavonás",
+      "remove": "Eltávolítás",
+      "cannotRemove": "Az észlelt allergén nem távolítható el.",
+      "addLabel": "Allergén hozzáadása…",
+      "addButton": "Hozzáadás",
+      "suggest": "AI javaslat",
+      "suggesting": "Elemzés…",
+      "aiUnavailable": "Az AI nem elérhető — nincs javaslat.",
+      "aiNothingNew": "Nincs új javasolt allergén.",
+      "aiAdded": "{count, plural, one {# javasolt allergén} other {# javasolt allergén}}",
+      "source": {
+        "deterministic": "Észlelt",
+        "ai": "AI",
+        "dietitian": "Hozzáadott"
+      }
+    },
+    "form": {
+      "title": "Cím",
+      "servings": "Adagok",
+      "prepTime": "Előkészítés (perc)",
+      "cookTime": "Főzés (perc)",
+      "instructions": "Elkészítés",
+      "notes": "Megjegyzések",
+      "storage": "Tárolás",
+      "cancel": "Mégse",
+      "saving": "Mentés…",
+      "create": "Recept létrehozása",
+      "save": "Módosítások mentése",
+      "createTitle": "Új recept",
+      "editTitle": "Recept szerkesztése",
+      "titleRequired": "A cím kötelező",
+      "saveError": "Nem sikerült menteni a receptet."
+    },
+    "editor": {
+      "back": "Vissza a receptekhez",
+      "notFound": "A recept nem található",
+      "edit": "Szerkesztés",
+      "export": "PDF exportálása",
+      "ingredients": "Hozzávalók",
+      "nutrition": "Tápérték",
+      "nutritionEmpty": "Adj hozzá hozzávalókat a tápérték megjelenítéséhez.",
+      "allergens": "Allergének",
+      "categories": "Kategóriák",
+      "details": "Részletek"
+    },
+    "categories": {
+      "none": "Még nincs",
+      "newKind": "Típus",
+      "newName": "Név",
+      "newNamePlaceholder": "pl. Reggeli",
+      "create": "Létrehozás",
+      "kind": {
+        "category": "Kategóriák",
+        "meal_category": "Étkezési kategóriák"
+      }
+    },
+    "delete": {
+      "title": "Törlöd a receptet?",
+      "body": "Ez eltávolítja a(z) {title} receptet a könyvtáradból.",
+      "confirm": "Törlés"
+    },
+    "export": {
+      "title": "Recept PDF exportálása",
+      "servings": "Hány adagra készüljön",
+      "language": "Nyelv",
+      "invalidServings": "Adj meg érvényes adagszámot.",
+      "error": "Nem sikerült létrehozni a PDF-et.",
+      "generating": "Létrehozás…",
+      "download": "PDF letöltése"
+    }
+  },
   "sample": {
     "clientCount": "{count, plural, one {# kliens} other {# kliens}}"
   }

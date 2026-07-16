@@ -32,6 +32,16 @@ export type Sex = (typeof SEXES)[number]
 export const AI_DECISIONS = ['accepted', 'edited', 'rejected'] as const
 export type AiDecision = (typeof AI_DECISIONS)[number]
 
+/** AI audit feature tags (must match the DB `ai_feature` enum). */
+export const AI_FEATURES = [
+  'clinical_narrative',
+  'allergen_suggestion',
+  'mealplan_chat',
+  'patient_friendly',
+  'food_translation',
+] as const
+export type AiFeature = (typeof AI_FEATURES)[number]
+
 // ── Field registry types ─────────────────────────────────────────────────────
 
 export interface LocalizedText {

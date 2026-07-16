@@ -11,6 +11,10 @@ import { getEnv } from '../config/env'
 export const CLINICAL_MODEL = 'claude-opus-4-8'
 export const ASSESSMENT_PROMPT_VERSION = 'assessment-v1'
 
+/** High-volume light tasks (allergen suggestion, food translation) route to haiku. */
+export const ALLERGEN_MODEL = 'claude-haiku-4-5-20251001'
+export const ALLERGEN_PROMPT_VERSION = 'allergen-v1'
+
 let client: Anthropic | undefined
 
 export function isAiEnabled(): boolean {

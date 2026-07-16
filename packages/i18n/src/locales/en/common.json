@@ -146,6 +146,140 @@
       "approveError": "Couldn't approve the targets."
     }
   },
+  "recipes": {
+    "title": "Recipes",
+    "new": "New recipe",
+    "searchPlaceholder": "Search recipes by title",
+    "loading": "Loading recipes…",
+    "loadError": "Couldn't load recipes.",
+    "filter": {
+      "category": "Category",
+      "allCategories": "All categories",
+      "excludeAllergens": "Exclude allergens"
+    },
+    "empty": {
+      "title": "No recipes yet",
+      "body": "Create your first recipe to get started.",
+      "cta": "New recipe"
+    },
+    "emptySearch": {
+      "title": "No matches",
+      "body": "No recipes match your filters."
+    },
+    "card": {
+      "servings": "{count, plural, one {# serving} other {# servings}}",
+      "kcalPerServing": "kcal / serving",
+      "noNutrition": "No ingredients yet"
+    },
+    "allergen": {
+      "milk": "Milk",
+      "gluten": "Gluten",
+      "eggs": "Eggs",
+      "peanuts": "Peanuts",
+      "soy": "Soy",
+      "tree_nuts": "Tree nuts",
+      "shellfish": "Shellfish"
+    },
+    "nutrition": {
+      "nutrient": "Nutrient",
+      "perServing": "Per serving",
+      "total": "Total",
+      "kcal": "Energy (kcal)",
+      "protein": "Protein (g)",
+      "carbs": "Carbs (g)",
+      "fat": "Fat (g)",
+      "fiber": "Fibre (g)",
+      "salt": "Salt (g)"
+    },
+    "ingredients": {
+      "searchPlaceholder": "Search USDA foods…",
+      "branded": "Include branded",
+      "degraded": "Showing cached results — USDA is temporarily unavailable.",
+      "noResults": "No foods found.",
+      "amount": "Amount",
+      "unit": "Unit",
+      "density": "Density (g/ml)",
+      "gramsPerPiece": "Grams / piece",
+      "add": "Add",
+      "addError": "Couldn't add the ingredient.",
+      "editAmount": "Edit amount",
+      "remove": "Remove"
+    },
+    "allergens": {
+      "none": "No allergens flagged yet.",
+      "confirmed": "Confirmed",
+      "confirm": "Confirm",
+      "unconfirm": "Unconfirm",
+      "remove": "Remove",
+      "cannotRemove": "A detected allergen can't be removed.",
+      "addLabel": "Add an allergen…",
+      "addButton": "Add",
+      "suggest": "Suggest with AI",
+      "suggesting": "Analyzing…",
+      "aiUnavailable": "AI is unavailable — no suggestions added.",
+      "aiNothingNew": "No new allergens suggested.",
+      "aiAdded": "{count, plural, one {# allergen suggested} other {# allergens suggested}}",
+      "source": {
+        "deterministic": "Detected",
+        "ai": "AI",
+        "dietitian": "Added"
+      }
+    },
+    "form": {
+      "title": "Title",
+      "servings": "Servings",
+      "prepTime": "Prep (min)",
+      "cookTime": "Cook (min)",
+      "instructions": "Preparation",
+      "notes": "Notes",
+      "storage": "Storage",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "create": "Create recipe",
+      "save": "Save changes",
+      "createTitle": "New recipe",
+      "editTitle": "Edit recipe",
+      "titleRequired": "Title is required",
+      "saveError": "Couldn't save the recipe."
+    },
+    "editor": {
+      "back": "Back to recipes",
+      "notFound": "Recipe not found",
+      "edit": "Edit",
+      "export": "Export PDF",
+      "ingredients": "Ingredients",
+      "nutrition": "Nutrition",
+      "nutritionEmpty": "Add ingredients to see nutrition.",
+      "allergens": "Allergens",
+      "categories": "Categories",
+      "details": "Details"
+    },
+    "categories": {
+      "none": "None yet",
+      "newKind": "Type",
+      "newName": "Name",
+      "newNamePlaceholder": "e.g. Breakfast",
+      "create": "Create",
+      "kind": {
+        "category": "Categories",
+        "meal_category": "Meal categories"
+      }
+    },
+    "delete": {
+      "title": "Delete recipe?",
+      "body": "This removes {title} from your library.",
+      "confirm": "Delete"
+    },
+    "export": {
+      "title": "Export recipe PDF",
+      "servings": "Servings to generate for",
+      "language": "Language",
+      "invalidServings": "Enter a valid servings number.",
+      "error": "Couldn't generate the PDF.",
+      "generating": "Generating…",
+      "download": "Download PDF"
+    }
+  },
   "sample": {
     "clientCount": "{count, plural, one {# client} other {# clients}}"
   }

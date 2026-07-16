@@ -146,6 +146,140 @@
       "approveError": "Nu am putut aproba țintele."
     }
   },
+  "recipes": {
+    "title": "Rețete",
+    "new": "Rețetă nouă",
+    "searchPlaceholder": "Caută rețete după titlu",
+    "loading": "Se încarcă rețetele…",
+    "loadError": "Nu s-au putut încărca rețetele.",
+    "filter": {
+      "category": "Categorie",
+      "allCategories": "Toate categoriile",
+      "excludeAllergens": "Exclude alergeni"
+    },
+    "empty": {
+      "title": "Nicio rețetă încă",
+      "body": "Creează prima rețetă pentru a începe.",
+      "cta": "Rețetă nouă"
+    },
+    "emptySearch": {
+      "title": "Niciun rezultat",
+      "body": "Nicio rețetă nu corespunde filtrelor."
+    },
+    "card": {
+      "servings": "{count, plural, one {# porție} few {# porții} other {# de porții}}",
+      "kcalPerServing": "kcal / porție",
+      "noNutrition": "Încă niciun ingredient"
+    },
+    "allergen": {
+      "milk": "Lapte",
+      "gluten": "Gluten",
+      "eggs": "Ouă",
+      "peanuts": "Arahide",
+      "soy": "Soia",
+      "tree_nuts": "Nuci",
+      "shellfish": "Crustacee"
+    },
+    "nutrition": {
+      "nutrient": "Nutrient",
+      "perServing": "La porție",
+      "total": "Total",
+      "kcal": "Energie (kcal)",
+      "protein": "Proteine (g)",
+      "carbs": "Glucide (g)",
+      "fat": "Grăsimi (g)",
+      "fiber": "Fibre (g)",
+      "salt": "Sare (g)"
+    },
+    "ingredients": {
+      "searchPlaceholder": "Caută alimente USDA…",
+      "branded": "Include produse de marcă",
+      "degraded": "Se afișează rezultate din cache — USDA este temporar indisponibil.",
+      "noResults": "Niciun aliment găsit.",
+      "amount": "Cantitate",
+      "unit": "Unitate",
+      "density": "Densitate (g/ml)",
+      "gramsPerPiece": "Grame / bucată",
+      "add": "Adaugă",
+      "addError": "Nu s-a putut adăuga ingredientul.",
+      "editAmount": "Editează cantitatea",
+      "remove": "Elimină"
+    },
+    "allergens": {
+      "none": "Niciun alergen marcat încă.",
+      "confirmed": "Confirmat",
+      "confirm": "Confirmă",
+      "unconfirm": "Anulează confirmarea",
+      "remove": "Elimină",
+      "cannotRemove": "Un alergen detectat nu poate fi eliminat.",
+      "addLabel": "Adaugă un alergen…",
+      "addButton": "Adaugă",
+      "suggest": "Sugerează cu AI",
+      "suggesting": "Se analizează…",
+      "aiUnavailable": "AI indisponibil — nicio sugestie adăugată.",
+      "aiNothingNew": "Niciun alergen nou sugerat.",
+      "aiAdded": "{count, plural, one {# alergen sugerat} few {# alergeni sugerați} other {# de alergeni sugerați}}",
+      "source": {
+        "deterministic": "Detectat",
+        "ai": "AI",
+        "dietitian": "Adăugat"
+      }
+    },
+    "form": {
+      "title": "Titlu",
+      "servings": "Porții",
+      "prepTime": "Pregătire (min)",
+      "cookTime": "Gătire (min)",
+      "instructions": "Preparare",
+      "notes": "Note",
+      "storage": "Păstrare",
+      "cancel": "Anulează",
+      "saving": "Se salvează…",
+      "create": "Creează rețeta",
+      "save": "Salvează modificările",
+      "createTitle": "Rețetă nouă",
+      "editTitle": "Editează rețeta",
+      "titleRequired": "Titlul este obligatoriu",
+      "saveError": "Nu s-a putut salva rețeta."
+    },
+    "editor": {
+      "back": "Înapoi la rețete",
+      "notFound": "Rețeta nu a fost găsită",
+      "edit": "Editează",
+      "export": "Exportă PDF",
+      "ingredients": "Ingrediente",
+      "nutrition": "Valori nutriționale",
+      "nutritionEmpty": "Adaugă ingrediente pentru a vedea valorile nutriționale.",
+      "allergens": "Alergeni",
+      "categories": "Categorii",
+      "details": "Detalii"
+    },
+    "categories": {
+      "none": "Încă niciuna",
+      "newKind": "Tip",
+      "newName": "Nume",
+      "newNamePlaceholder": "ex. Mic dejun",
+      "create": "Creează",
+      "kind": {
+        "category": "Categorii",
+        "meal_category": "Categorii de masă"
+      }
+    },
+    "delete": {
+      "title": "Ștergi rețeta?",
+      "body": "Aceasta elimină {title} din biblioteca ta.",
+      "confirm": "Șterge"
+    },
+    "export": {
+      "title": "Exportă rețeta în PDF",
+      "servings": "Număr de porții pentru generare",
+      "language": "Limbă",
+      "invalidServings": "Introdu un număr valid de porții.",
+      "error": "Nu s-a putut genera PDF-ul.",
+      "generating": "Se generează…",
+      "download": "Descarcă PDF"
+    }
+  },
   "sample": {
     "clientCount": "{count, plural, one {# client} few {# clienți} other {# de clienți}}"
   }

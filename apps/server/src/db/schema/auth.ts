@@ -1,12 +1,11 @@
-import { integer, pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
+import { index, integer, json, pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
 import { idColumn, timestamps } from '../columns'
 
 /**
  * Auth cluster (ADR-001 schema freeze). `tenant_id === users.id` for a single
  * dietitian tenant — modeled as a distinct column so multi-seat clinics are a
  * later addition with no backfill. MFA/lockout columns are provisioned now,
- * wired later. The session table (`user_sessions`) is managed by
- * connect-pg-simple, not declared here.
+ * wired later.
  */
 export const users = pgTable('users', {
   id: idColumn(),
@@ -35,6 +34,27 @@ export const authTokens = pgTable('auth_tokens', {
   usedAt: timestamp('used_at', { withTimezone: true }),
   ...timestamps,
 })
+
+/**
+ * Session store table for connect-pg-simple (`tableName: 'user_sessions'`).
+ * Declared here so `db:push`/migrations OWN it (ADR §3.3) — otherwise drizzle-kit
+ * sees an "unknown" table and proposes dropping it on every push, which
+ * de-authenticates every user and breaks session lookups until it's recreated.
+ * Column shape matches connect-pg-simple's canonical table exactly (text `sid`
+ * PK, `json` sess, `timestamp(6)` expire) so the store operates on it unchanged;
+ * `createTableIfMissing` then simply finds it already present.
+ */
+export const userSessions = pgTable(
+  'user_sessions',
+  {
+    sid: text('sid').primaryKey(),
+    sess: json('sess').notNull(),
+    expire: timestamp('expire', { precision: 6 }).notNull(),
+  },
+  (t) => ({
+    expireIdx: index('user_sessions_expire_idx').on(t.expire),
+  }),
+)
 
 export type UserRow = typeof users.$inferSelect
 export type NewUserRow = typeof users.$inferInsert
