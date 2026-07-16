@@ -44,15 +44,12 @@ function hbFromRow(row: ClientAssessmentRow): HbInputs | null {
  * and approve human-final targets even with the Anthropic API turned off.
  */
 export async function finishWithAi(tenantId: string, row: ClientAssessmentRow): Promise<FinishWithAiResult> {
+  // Body metrics are OPTIONAL. When present we compute authoritative calorie/macro
+  // targets; when absent the AI still analyses whatever the anamnesis contains and
+  // the dietitian sets final targets by hand. "Finish with AI" is never blocked.
   const hb = hbFromRow(row)
-  if (!hb) {
-    throw new ServiceError(
-      'VALIDATION_ERROR',
-      'Sex, age, height, weight and activity level are required before finishing with AI',
-    )
-  }
   const type = row.type as AssessmentType
-  const deterministic = resolveAssessmentTargets(hb, type) // maintenance (adjustment 0)
+  const deterministic = hb ? resolveAssessmentTargets(hb, type) : null // maintenance (adjustment 0)
 
   let ai: FinishWithAiResult['ai']
 
@@ -79,11 +76,17 @@ export async function finishWithAi(tenantId: string, row: ClientAssessmentRow): 
         proposedValues: proposal,
       })
       await assessmentsRepository.setAiProposed(tenantId, row.id, proposal, ASSESSMENT_PROMPT_VERSION)
-      const adjusted = resolveAssessmentTargets(
-        { ...hb, calorieAdjustmentPercent: proposal.calorieAdjustmentPercent },
-        type,
-      )
-      ai = { status: 'proposed', proposal, adjustedTargets: roundTargets(adjusted) }
+      // Only apply the AI's % adjustment when there's a deterministic base to adjust.
+      const adjusted =
+        hb && deterministic
+          ? roundTargets(
+              resolveAssessmentTargets(
+                { ...hb, calorieAdjustmentPercent: proposal.calorieAdjustmentPercent },
+                type,
+              ),
+            )
+          : null
+      ai = { status: 'proposed', proposal, adjustedTargets: adjusted }
     } catch (error) {
       if (error instanceof MalformedProposalError) {
         await assessmentsRepository.recordInteraction({
@@ -106,7 +109,11 @@ export async function finishWithAi(tenantId: string, row: ClientAssessmentRow): 
   }
 
   const updated = (await assessmentsRepository.findById(tenantId, row.id)) ?? row
-  return { assessment: toAssessmentDto(updated), deterministic: roundTargets(deterministic), ai }
+  return {
+    assessment: toAssessmentDto(updated),
+    deterministic: deterministic ? roundTargets(deterministic) : null,
+    ai,
+  }
 }
 
 async function recordUnavailable(tenantId: string, row: ClientAssessmentRow): Promise<void> {
@@ -135,16 +142,15 @@ export async function approveAssessment(
   if (row.status !== 'ai_proposed') {
     throw new ServiceError('CONFLICT', `Cannot approve an assessment in status "${row.status}"`)
   }
+  // Body metrics optional: recompute BMR/TDEE deterministically when present, else
+  // store null (the dietitian's manually-entered final targets still persist).
   const hb = hbFromRow(row)
-  if (!hb) {
-    throw new ServiceError('VALIDATION_ERROR', 'Assessment is missing the required Harris–Benedict inputs')
-  }
-  const deterministic = resolveAssessmentTargets(hb, row.type as AssessmentType)
+  const deterministic = hb ? resolveAssessmentTargets(hb, row.type as AssessmentType) : null
   const targets = await assessmentsRepository.approve(
     tenantId,
     row,
     approvedByUserId,
-    { bmrKcal: deterministic.bmrKcal, maintenanceTdeeKcal: deterministic.maintenanceTdeeKcal },
+    { bmrKcal: deterministic?.bmrKcal ?? null, maintenanceTdeeKcal: deterministic?.maintenanceTdeeKcal ?? null },
     input,
   )
   return { targets: toTargetsDto(targets), assessmentStatus: 'completed' }

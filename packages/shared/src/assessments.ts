@@ -760,8 +760,9 @@ export interface AssessmentTargetsDto {
   id: string
   assessmentId: string
   clientId: string
-  bmrKcal: number
-  maintenanceTdeeKcal: number
+  /** Null when body metrics weren't provided — targets were set by hand. */
+  bmrKcal: number | null
+  maintenanceTdeeKcal: number | null
   targetKcal: number
   proteinG: number
   carbsG: number
@@ -770,17 +771,22 @@ export interface AssessmentTargetsDto {
   approvedAt: string
 }
 
-/** Response of POST …/finish-with-ai. Deterministic block is always present. */
+/**
+ * Response of POST …/finish-with-ai. The deterministic block is present ONLY when
+ * the five body metrics (sex/age/height/weight/activity) were provided — you can't
+ * compute a BMR without them. It's null otherwise; the AI narrative still runs on
+ * whatever the form contains, and the dietitian enters final targets by hand.
+ */
 export interface FinishWithAiResult {
   assessment: AssessmentDto
-  /** Authoritative maintenance figures — shown as the source of truth. */
-  deterministic: DeterministicTargetsDto
+  /** Authoritative maintenance figures, or null when body metrics are incomplete. */
+  deterministic: DeterministicTargetsDto | null
   ai:
     | {
         status: 'proposed'
         proposal: AiAssessmentProposal
-        /** Maintenance re-computed with the AI's (clamped) suggested adjustment. */
-        adjustedTargets: DeterministicTargetsDto
+        /** Maintenance re-computed with the AI's adjustment; null without metrics. */
+        adjustedTargets: DeterministicTargetsDto | null
       }
     | { status: 'unavailable'; retryable: boolean }
 }

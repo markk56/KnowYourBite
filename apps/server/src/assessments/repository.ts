@@ -50,8 +50,8 @@ export function toTargetsDto(row: AssessmentTargetRow): AssessmentTargetsDto {
     id: row.id,
     assessmentId: row.assessmentId,
     clientId: row.clientId,
-    bmrKcal: Number(row.bmrKcal),
-    maintenanceTdeeKcal: Number(row.maintenanceTdeeKcal),
+    bmrKcal: row.bmrKcal == null ? null : Number(row.bmrKcal),
+    maintenanceTdeeKcal: row.maintenanceTdeeKcal == null ? null : Number(row.maintenanceTdeeKcal),
     targetKcal: Number(row.targetKcal),
     proteinG: Number(row.proteinG),
     carbsG: Number(row.carbsG),
@@ -195,7 +195,7 @@ export const assessmentsRepository = {
     tenantId: string,
     assessment: ClientAssessmentRow,
     approvedByUserId: string,
-    deterministic: { bmrKcal: number; maintenanceTdeeKcal: number },
+    deterministic: { bmrKcal: number | null; maintenanceTdeeKcal: number | null },
     finalValues: { targetKcal: number; proteinG: number; carbsG: number; fatG: number; decisionSummary: AiDecision },
   ): Promise<AssessmentTargetRow> {
     const db = getDb()
@@ -205,8 +205,9 @@ export const assessmentsRepository = {
         tenantId,
         assessmentId: assessment.id,
         clientId: assessment.clientId,
-        bmrKcal: String(deterministic.bmrKcal),
-        maintenanceTdeeKcal: String(deterministic.maintenanceTdeeKcal),
+        bmrKcal: deterministic.bmrKcal == null ? null : String(deterministic.bmrKcal),
+        maintenanceTdeeKcal:
+          deterministic.maintenanceTdeeKcal == null ? null : String(deterministic.maintenanceTdeeKcal),
         targetKcal: String(finalValues.targetKcal),
         proteinG: String(finalValues.proteinG),
         carbsG: String(finalValues.carbsG),

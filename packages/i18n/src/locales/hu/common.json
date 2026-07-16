@@ -143,7 +143,8 @@
       "fat": "Zsír (g)",
       "approve": "Célok jóváhagyása",
       "approving": "Jóváhagyás…",
-      "approveError": "Nem sikerült jóváhagyni a célokat."
+      "approveError": "Nem sikerült jóváhagyni a célokat.",
+      "noMetrics": "A testadatok (nem, életkor, magasság, testsúly, aktivitás) hiányoznak, ezért a kalória- és makrócélok nem számíthatók ki. Add meg a végső célokat kézzel alább."
     }
   },
   "recipes": {

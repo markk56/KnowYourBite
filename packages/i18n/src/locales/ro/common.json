@@ -143,7 +143,8 @@
       "fat": "Grăsimi (g)",
       "approve": "Aprobă țintele",
       "approving": "Se aprobă…",
-      "approveError": "Nu am putut aproba țintele."
+      "approveError": "Nu am putut aproba țintele.",
+      "noMetrics": "Datele corporale (sex, vârstă, înălțime, greutate, activitate) nu au fost înregistrate, deci țintele de calorii și macro nu pot fi calculate. Introdu manual țintele finale mai jos."
     }
   },
   "recipes": {

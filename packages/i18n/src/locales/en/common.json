@@ -143,7 +143,8 @@
       "fat": "Fat (g)",
       "approve": "Approve targets",
       "approving": "Approving…",
-      "approveError": "Couldn't approve the targets."
+      "approveError": "Couldn't approve the targets.",
+      "noMetrics": "Body metrics (sex, age, height, weight, activity) weren't recorded, so calorie & macro targets can't be calculated. Enter the final targets below by hand."
     }
   },
   "recipes": {

@@ -73,9 +73,11 @@ export const assessmentTargets = pgTable(
       .notNull()
       .references(() => clients.id, { onDelete: 'restrict' }),
 
-    // Deterministic (@kyb/domain) — Harris–Benedict maintenance TDEE.
-    bmrKcal: numeric('bmr_kcal', { precision: 7, scale: 1 }).notNull(),
-    maintenanceTdeeKcal: numeric('maintenance_tdee_kcal', { precision: 7, scale: 1 }).notNull(),
+    // Deterministic (@kyb/domain) — Harris–Benedict maintenance TDEE. Nullable:
+    // targets can be approved from a qualitative anamnesis (no body metrics), in
+    // which case the dietitian sets the final numbers by hand.
+    bmrKcal: numeric('bmr_kcal', { precision: 7, scale: 1 }),
+    maintenanceTdeeKcal: numeric('maintenance_tdee_kcal', { precision: 7, scale: 1 }),
 
     // Final APPROVED targets (human authority). May equal the AI suggestion or be edited.
     targetKcal: numeric('target_kcal', { precision: 7, scale: 1 }).notNull(),

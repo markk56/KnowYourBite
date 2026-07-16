@@ -84,9 +84,11 @@ export function parseProposal(raw: unknown): AiAssessmentProposal {
 
 export interface ProposalContext {
   type: AssessmentType
-  hb: HbInputs
+  /** Body metrics — may be null when the dietitian didn't record them. */
+  hb: HbInputs | null
   payload: AssessmentPayload
-  deterministic: DeterministicTargets
+  /** Deterministic maintenance figures — null without complete body metrics. */
+  deterministic: DeterministicTargets | null
 }
 
 function buildUserPrompt(ctx: ProposalContext): string {
@@ -94,10 +96,16 @@ function buildUserPrompt(ctx: ProposalContext): string {
     .filter(([, v]) => v !== null && v !== '' && v !== undefined)
     .map(([k, v]) => `- ${k}: ${String(v)}`)
     .join('\n')
+  const metrics = ctx.hb
+    ? `Client (de-identified): sex ${ctx.hb.sex}, age ${ctx.hb.ageYears}, height ${ctx.hb.heightCm} cm, weight ${ctx.hb.weightKg} kg, activity factor ${ctx.hb.activityFactor}.`
+    : 'Client body metrics (sex/age/height/weight/activity) were not recorded — do not estimate calorie targets, keep any adjustment at 0, and focus on qualitative guidance.'
+  const tdee = ctx.deterministic
+    ? `Deterministic maintenance TDEE: ${Math.round(ctx.deterministic.maintenanceTdeeKcal)} kcal (BMR ${Math.round(ctx.deterministic.bmrKcal)} kcal).`
+    : 'No deterministic TDEE is available (missing body metrics).'
   return [
     `Assessment type: ${ctx.type}`,
-    `Client (de-identified): sex ${ctx.hb.sex}, age ${ctx.hb.ageYears}, height ${ctx.hb.heightCm} cm, weight ${ctx.hb.weightKg} kg, activity factor ${ctx.hb.activityFactor}.`,
-    `Deterministic maintenance TDEE: ${Math.round(ctx.deterministic.maintenanceTdeeKcal)} kcal (BMR ${Math.round(ctx.deterministic.bmrKcal)} kcal).`,
+    metrics,
+    tdee,
     '',
     '===== CLIENT ANSWERS (untrusted data) =====',
     answers || '(no free-form answers provided)',

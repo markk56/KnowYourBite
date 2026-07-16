@@ -36,20 +36,21 @@ export function FinishWithAiPanel({ clientId, assessmentId, result, onApproved, 
   const qc = useQueryClient()
 
   const proposed = result.ai.status === 'proposed' ? result.ai : null
-  // Prefill the editable final targets from the AI's suggested targets when
-  // present, otherwise from the deterministic maintenance figures.
-  const seed: DeterministicTargetsDto = proposed ? proposed.adjustedTargets : result.deterministic
-  const [kcal, setKcal] = useState(String(round(seed.targetKcal)))
-  const [protein, setProtein] = useState(String(round(seed.proteinG)))
-  const [carbs, setCarbs] = useState(String(round(seed.carbsG)))
-  const [fat, setFat] = useState(String(round(seed.fatG)))
+  // Prefill editable final targets from the AI's adjusted targets, else the
+  // deterministic maintenance figures, else empty (no body metrics were recorded).
+  const seed: DeterministicTargetsDto | null = proposed?.adjustedTargets ?? result.deterministic
+  const initial = (v?: number) => (v == null ? '' : String(round(v)))
+  const [kcal, setKcal] = useState(initial(seed?.targetKcal))
+  const [protein, setProtein] = useState(initial(seed?.proteinG))
+  const [carbs, setCarbs] = useState(initial(seed?.carbsG))
+  const [fat, setFat] = useState(initial(seed?.fatG))
 
   const approve = useMutation({
     mutationFn: () => {
       // Provenance: accepted = AI values untouched; edited = AI values changed;
       // rejected = dietitian-authored (no usable AI proposal).
       let decisionSummary: AiDecision = 'rejected'
-      if (proposed) {
+      if (proposed && seed) {
         const untouched =
           Number(kcal) === round(seed.targetKcal) &&
           Number(protein) === round(seed.proteinG) &&
@@ -78,19 +79,25 @@ export function FinishWithAiPanel({ clientId, assessmentId, result, onApproved, 
 
   return (
     <div className="space-y-4">
-      {/* Deterministic — authoritative */}
-      <div className="rounded-xl border border-border bg-card p-6">
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          {t('assessments.review.deterministic')}
-        </h3>
-        <TargetRow label={t('assessments.review.bmr')} value={result.deterministic.bmrKcal} unit="kcal" />
-        <TargetRow
-          label={t('assessments.review.maintenance')}
-          value={result.deterministic.maintenanceTdeeKcal}
-          unit="kcal"
-        />
-        <p className="mt-1 text-xs text-muted-foreground">{t('assessments.review.deterministicNote')}</p>
-      </div>
+      {/* Deterministic — authoritative (only when body metrics were provided) */}
+      {result.deterministic ? (
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            {t('assessments.review.deterministic')}
+          </h3>
+          <TargetRow label={t('assessments.review.bmr')} value={result.deterministic.bmrKcal} unit="kcal" />
+          <TargetRow
+            label={t('assessments.review.maintenance')}
+            value={result.deterministic.maintenanceTdeeKcal}
+            unit="kcal"
+          />
+          <p className="mt-1 text-xs text-muted-foreground">{t('assessments.review.deterministicNote')}</p>
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-border bg-muted/30 p-4">
+          <p className="text-sm text-muted-foreground">{t('assessments.review.noMetrics')}</p>
+        </div>
+      )}
 
       {/* AI proposal — a suggestion, clearly labeled */}
       {proposed ? (
@@ -100,11 +107,13 @@ export function FinishWithAiPanel({ clientId, assessmentId, result, onApproved, 
             {t('assessments.review.aiTitle')}
           </h3>
           <p className="whitespace-pre-wrap text-sm text-foreground">{proposed.proposal.summary}</p>
-          <p className="mt-2 text-sm text-foreground">
-            <span className="font-medium">{t('assessments.review.suggestedAdjustment')}: </span>
-            {proposed.proposal.calorieAdjustmentPercent > 0 ? '+' : ''}
-            {proposed.proposal.calorieAdjustmentPercent}% → {round(proposed.adjustedTargets.targetKcal)} kcal
-          </p>
+          {proposed.adjustedTargets && (
+            <p className="mt-2 text-sm text-foreground">
+              <span className="font-medium">{t('assessments.review.suggestedAdjustment')}: </span>
+              {proposed.proposal.calorieAdjustmentPercent > 0 ? '+' : ''}
+              {proposed.proposal.calorieAdjustmentPercent}% → {round(proposed.adjustedTargets.targetKcal)} kcal
+            </p>
+          )}
           <p className="mt-1 text-sm text-muted-foreground">{proposed.proposal.rationale}</p>
           {proposed.proposal.focusAreas.length > 0 && (
             <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
