@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react'
 import { Link, useLocation } from 'wouter'
 import { useTranslation } from 'react-i18next'
-import { BookOpen, Plus, Search } from 'lucide-react'
+import { BookOpen, ChefHat, Plus, Search } from 'lucide-react'
 import { ALLERGENS, type Allergen, type RecipeListQuery, type RecipeSummaryDto } from '@kyb/shared'
 import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
+import { RecipeMetaForm } from './RecipeMetaForm'
 import { useCategories, useRecipes } from './queries'
 
 function RecipeCard({ recipe }: { recipe: RecipeSummaryDto }) {
@@ -15,42 +17,53 @@ function RecipeCard({ recipe }: { recipe: RecipeSummaryDto }) {
   return (
     <Link
       href={`/recipes/${recipe.id}`}
-      className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
     >
-      <div className="flex items-start justify-between gap-3">
-        <p className="min-w-0 flex-1 truncate font-semibold text-foreground">{recipe.title}</p>
-        <span className="flex-shrink-0 text-xs text-muted-foreground">
+      <div className="relative aspect-[3/2] overflow-hidden bg-muted">
+        {recipe.imageUrl ? (
+          <img
+            src={recipe.imageUrl}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/15 via-secondary/10 to-muted">
+            <ChefHat className="h-10 w-10 text-primary/40" />
+          </div>
+        )}
+        <span className="absolute left-2 top-2 rounded-full bg-background/85 px-2.5 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur">
           {t('recipes.card.servings', { count: recipe.servings })}
         </span>
+        {kcal != null && (
+          <span className="absolute right-2 top-2 rounded-full bg-background/85 px-2.5 py-1 text-xs font-semibold text-foreground shadow-sm backdrop-blur">
+            {new Intl.NumberFormat(i18n.language).format(kcal)} {t('recipes.card.kcalPerServing')}
+          </span>
+        )}
       </div>
 
-      {kcal != null ? (
-        <p className="text-sm text-muted-foreground">
-          {new Intl.NumberFormat(i18n.language).format(kcal)} {t('recipes.card.kcalPerServing')}
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <p className="line-clamp-2 font-semibold text-foreground transition-colors group-hover:text-primary">
+          {recipe.title}
         </p>
-      ) : (
-        <p className="text-sm text-muted-foreground">{t('recipes.card.noNutrition')}</p>
-      )}
 
-      {recipe.allergens.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {recipe.allergens.map((a) => (
-            <span key={a} className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-              {t(`recipes.allergen.${a}`)}
-            </span>
-          ))}
-        </div>
-      )}
+        {kcal == null && <p className="text-sm text-muted-foreground">{t('recipes.card.noNutrition')}</p>}
 
-      {recipe.categories.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {recipe.categories.map((c) => (
-            <span key={c.id} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">
-              {c.nameEn}
-            </span>
-          ))}
-        </div>
-      )}
+        {(recipe.allergens.length > 0 || recipe.categories.length > 0) && (
+          <div className="mt-auto flex flex-wrap gap-1 pt-1">
+            {recipe.categories.map((c) => (
+              <span key={c.id} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">
+                {c.nameEn}
+              </span>
+            ))}
+            {recipe.allergens.map((a) => (
+              <span key={a} className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+                {t(`recipes.allergen.${a}`)}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </Link>
   )
 }
@@ -61,6 +74,7 @@ export function RecipeListPage() {
   const [search, setSearch] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [excludeAllergens, setExcludeAllergens] = useState<Allergen[]>([])
+  const [createOpen, setCreateOpen] = useState(false)
 
   const { data: categories } = useCategories()
 
@@ -82,7 +96,7 @@ export function RecipeListPage() {
     <div className="mx-auto max-w-6xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold tracking-tight text-foreground">{t('recipes.title')}</h2>
-        <Button onClick={() => setLocation('/recipes/new')}>
+        <Button onClick={() => setCreateOpen(true)}>
           <Plus className="h-4 w-4" />
           {t('recipes.new')}
         </Button>
@@ -156,7 +170,7 @@ export function RecipeListPage() {
             <>
               <h3 className="text-lg font-semibold text-foreground">{t('recipes.empty.title')}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{t('recipes.empty.body')}</p>
-              <Button className="mt-4" onClick={() => setLocation('/recipes/new')}>
+              <Button className="mt-4" onClick={() => setCreateOpen(true)}>
                 <Plus className="h-4 w-4" />
                 {t('recipes.empty.cta')}
               </Button>
@@ -170,6 +184,22 @@ export function RecipeListPage() {
           ))}
         </div>
       )}
+
+      <Dialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        title={t('recipes.form.createTitle')}
+        className="max-w-xl max-h-[calc(100vh-2rem)] overflow-y-auto"
+      >
+        <RecipeMetaForm
+          mode="create"
+          onCreated={(recipe) => {
+            setCreateOpen(false)
+            setLocation(`/recipes/${recipe.id}`)
+          }}
+          onCancel={() => setCreateOpen(false)}
+        />
+      </Dialog>
     </div>
   )
 }

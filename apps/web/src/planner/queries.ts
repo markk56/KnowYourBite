@@ -6,6 +6,7 @@ import type {
   MealPlanCreateInput,
   MealPlanDto,
   MealPlanUpdateInput,
+  PlannerChatMessage,
   UpdateEntryInput,
   UpdateExtraInput,
   UpdateWindowInput,
@@ -103,4 +104,11 @@ export function useUpdateExtra(id: string) {
 }
 export function useRemoveExtra(id: string) {
   return usePlanMutation((extraId: string) => mealPlansApi.removeExtra(id, extraId))
+}
+
+/** One turn of the propose-only planning assistant (does not mutate the plan cache). */
+export function usePlannerChat(id: string) {
+  return useMutation({
+    mutationFn: (messages: PlannerChatMessage[]) => mealPlansApi.chat(id, messages),
+  })
 }

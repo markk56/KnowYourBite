@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useLocation, useParams } from 'wouter'
+import { Link, Redirect, useLocation, useParams } from 'wouter'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft, Check, Download, Pencil, Trash2, X } from 'lucide-react'
 import { VOLUME_UNITS, type RecipeDto, type RecipeIngredientDto } from '@kyb/shared'
@@ -149,8 +149,13 @@ export function RecipeEditorPage() {
     <div className="mx-auto max-w-4xl space-y-6">
       {backLink}
 
-      <div className="rounded-xl border border-border bg-card p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
+        {r.imageUrl && (
+          <div className="aspect-[16/6] w-full overflow-hidden bg-muted">
+            <img src={r.imageUrl} alt="" className="h-full w-full object-cover" />
+          </div>
+        )}
+        <div className="flex flex-wrap items-start justify-between gap-4 p-6">
           <div>
             <h2 className="text-2xl font-bold text-foreground">{r.title}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -237,7 +242,12 @@ export function RecipeEditorPage() {
         </Section>
       )}
 
-      <Dialog open={editMeta} onClose={() => setEditMeta(false)} title={t('recipes.form.editTitle')}>
+      <Dialog
+        open={editMeta}
+        onClose={() => setEditMeta(false)}
+        title={t('recipes.form.editTitle')}
+        className="max-w-xl max-h-[calc(100vh-2rem)] overflow-y-auto"
+      >
         <RecipeMetaForm
           mode="edit"
           initial={r}
@@ -268,23 +278,11 @@ export function RecipeEditorPage() {
   )
 }
 
+/**
+ * Recipe creation now lives in a modal on the list page. This route is kept only
+ * so old `/recipes/new` links (bookmarks) don't dead-end — it redirects to the
+ * library where the "New recipe" dialog opens.
+ */
 export function RecipeCreatePage() {
-  const { t } = useTranslation()
-  const [, setLocation] = useLocation()
-  return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <Link href="/recipes" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" />
-        {t('recipes.editor.back')}
-      </Link>
-      <div className="rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-4 text-xl font-bold text-foreground">{t('recipes.form.createTitle')}</h2>
-        <RecipeMetaForm
-          mode="create"
-          onCreated={(recipe) => setLocation(`/recipes/${recipe.id}`)}
-          onCancel={() => setLocation('/recipes')}
-        />
-      </div>
-    </div>
-  )
+  return <Redirect to="/recipes" />
 }

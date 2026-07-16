@@ -29,7 +29,8 @@ export function createApp(options: CreateAppOptions = {}): Express {
       contentSecurityPolicy: false,
     }),
   )
-  app.use(express.json({ limit: '1mb' }))
+  // 4mb headroom for inline recipe cover photos (compressed to data URLs client-side).
+  app.use(express.json({ limit: '4mb' }))
 
   if (options.sessionMiddleware) {
     app.use(options.sessionMiddleware)

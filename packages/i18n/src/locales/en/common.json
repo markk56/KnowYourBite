@@ -234,6 +234,13 @@
       "instructions": "Preparation",
       "notes": "Notes",
       "storage": "Storage",
+      "photo": "Photo",
+      "addPhoto": "Add a photo",
+      "changePhoto": "Change",
+      "removePhoto": "Remove",
+      "photoHint": "JPG, PNG or WebP",
+      "photoInvalid": "Please choose an image file.",
+      "photoError": "Couldn't process that image.",
       "cancel": "Cancel",
       "saving": "Saving…",
       "create": "Create recipe",
@@ -241,6 +248,7 @@
       "createTitle": "New recipe",
       "editTitle": "Edit recipe",
       "titleRequired": "Title is required",
+      "invalid": "Please check the highlighted fields.",
       "saveError": "Couldn't save the recipe."
     },
     "editor": {
@@ -365,6 +373,24 @@
       "days": "Days",
       "day": "Day {n}",
       "noDays": "This plan has no days."
+    },
+    "chat": {
+      "open": "AI assistant",
+      "title": "Planning assistant",
+      "close": "Close",
+      "intro": "Ask for help balancing this plan — e.g. “add more protein to lunch” or “this day is over on calories.”",
+      "disclaimer": "Suggestions are proposals only. Nothing changes until you apply it, and every number stays deterministic.",
+      "unavailable": "The assistant is unavailable right now. Try again shortly.",
+      "thinking": "Thinking…",
+      "placeholder": "Ask the assistant…",
+      "send": "Send",
+      "setMultiplier": "Set {title} to ×{mult}",
+      "staleEntry": "an entry",
+      "addFood": "Add {food} ({amount} {unit}) to {window}",
+      "staleWindow": "a meal",
+      "apply": "Apply",
+      "chooseFood": "Choose food…",
+      "applied": "Applied ✓"
     }
   },
   "sample": {

@@ -32,6 +32,9 @@ export function AddExtraDialog({
   open,
   windowId,
   windowName,
+  initialQuery,
+  initialAmount,
+  initialUnit,
   onClose,
   onAdd,
   isAdding,
@@ -39,6 +42,10 @@ export function AddExtraDialog({
   open: boolean
   windowId: string | null
   windowName: string
+  /** Prefills from an AI "add food" proposal (dietitian still picks the exact food). */
+  initialQuery?: string
+  initialAmount?: number
+  initialUnit?: IngredientUnit
   onClose: () => void
   onAdd: (input: AddExtraInput) => void
   isAdding: boolean
@@ -47,6 +54,14 @@ export function AddExtraDialog({
   const [term, setTerm] = useState('')
   const [includeBranded, setIncludeBranded] = useState(false)
   const [selected, setSelected] = useState<UsdaFoodDto | null>(null)
+
+  // When the dialog (re)opens, seed the search from an AI proposal if present.
+  useEffect(() => {
+    if (open) {
+      setTerm(initialQuery ?? '')
+      setSelected(null)
+    }
+  }, [open, windowId, initialQuery])
 
   const debounced = useDebounced(term, 350)
   const { data, isFetching } = useUsdaSearch(debounced, includeBranded)
@@ -122,6 +137,8 @@ export function AddExtraDialog({
           <QuantityForm
             food={selected}
             windowId={windowId}
+            initialAmount={initialAmount}
+            initialUnit={initialUnit}
             isAdding={isAdding}
             onCancel={() => setSelected(null)}
             onAdd={(input) => {
@@ -138,19 +155,23 @@ export function AddExtraDialog({
 function QuantityForm({
   food,
   windowId,
+  initialAmount,
+  initialUnit,
   onAdd,
   onCancel,
   isAdding,
 }: {
   food: UsdaFoodDto
   windowId: string
+  initialAmount?: number
+  initialUnit?: IngredientUnit
   onAdd: (input: AddExtraInput) => void
   onCancel: () => void
   isAdding: boolean
 }) {
   const { t } = useTranslation()
-  const [amount, setAmount] = useState('100')
-  const [unit, setUnit] = useState<IngredientUnit>('g')
+  const [amount, setAmount] = useState(initialAmount != null ? String(initialAmount) : '100')
+  const [unit, setUnit] = useState<IngredientUnit>(initialUnit ?? 'g')
   const [density, setDensity] = useState('1')
   const [gramsPerPiece, setGramsPerPiece] = useState('50')
 

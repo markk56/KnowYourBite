@@ -285,3 +285,77 @@ export type UpdateExtraInput = z.infer<typeof updateExtraInputSchema>
 export interface MealPlanListQuery {
   clientId?: string
 }
+
+// ── AI planning chat (slice 4) — propose-only, two allowed actions ─────────────
+
+/**
+ * The ONLY two actions the AI planning assistant may propose (ADR §6). Structurally
+ * there is no tool that can touch a recipe's ingredients — the assistant can only
+ * (a) suggest a new serving multiplier for an EXISTING entry, or (b) suggest adding
+ * a standalone food to a window. Every proposal is rendered as an "Apply" button
+ * that routes through the SAME validated mutation a dietitian uses by hand; nothing
+ * the AI returns is ever auto-committed.
+ */
+export const PLANNER_APPLY_TOOLS = ['setServingMultiplier', 'addExtraFood'] as const
+export type PlannerApplyTool = (typeof PLANNER_APPLY_TOOLS)[number]
+
+/** Adjust an existing entry's multiplier (to an allowed value). Routes to updateEntry. */
+export const setServingMultiplierProposalSchema = z.object({
+  tool: z.literal('setServingMultiplier'),
+  entryId: z.string().uuid(),
+  servingMultiplier: servingMultiplierSchema,
+  rationale: z.string().max(600).default(''),
+})
+
+/**
+ * Suggest adding a food to a window. The AI proposes only a search phrase + amount;
+ * the dietitian picks the actual USDA food on apply, so the AI never supplies an
+ * fdcId or any nutrient value (it cannot invent nutrition). Routes to addExtra.
+ */
+export const addExtraFoodProposalSchema = z.object({
+  tool: z.literal('addExtraFood'),
+  windowId: z.string().uuid(),
+  foodQuery: z.string().trim().min(1).max(120),
+  amount: z.number().positive().max(1_000_000),
+  unit: z.enum(INGREDIENT_UNITS).default('g'),
+  rationale: z.string().max(600).default(''),
+})
+
+export const plannerProposalSchema = z.discriminatedUnion('tool', [
+  setServingMultiplierProposalSchema,
+  addExtraFoodProposalSchema,
+])
+export type PlannerProposal = z.infer<typeof plannerProposalSchema>
+export type SetServingMultiplierProposal = z.infer<typeof setServingMultiplierProposalSchema>
+export type AddExtraFoodProposal = z.infer<typeof addExtraFoodProposalSchema>
+
+export const PLANNER_CHAT_ROLES = ['user', 'assistant'] as const
+export type PlannerChatRole = (typeof PLANNER_CHAT_ROLES)[number]
+
+export interface PlannerChatMessage {
+  role: PlannerChatRole
+  content: string
+}
+
+/** The client sends the running transcript; plan context is derived server-side from the id. */
+export const plannerChatRequestSchema = z.object({
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(PLANNER_CHAT_ROLES),
+        content: z.string().trim().min(1).max(4000),
+      }),
+    )
+    .min(1)
+    .max(40),
+})
+export type PlannerChatRequest = z.infer<typeof plannerChatRequestSchema>
+
+export interface PlannerChatResponse {
+  /** The assistant's prose reply. */
+  reply: string
+  /** Validated, propose-only actions (may be empty). */
+  proposals: PlannerProposal[]
+  /** 'ok' when the model answered; 'unavailable' when AI is off/unreachable/malformed. */
+  status: 'ok' | 'unavailable'
+}

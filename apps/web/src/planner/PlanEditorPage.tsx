@@ -21,8 +21,9 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { ArrowLeft, Clock, GripVertical, Plus, Trash2, Utensils } from 'lucide-react'
+import { ArrowLeft, Clock, GripVertical, Plus, Sparkles, Trash2, Utensils } from 'lucide-react'
 import type {
+  IngredientUnit,
   MealEntryDto,
   MealExtraDto,
   MealPlanDayDto,
@@ -47,6 +48,7 @@ import { MultiplierControl } from './MultiplierControl'
 import { NutritionDashboard } from './NutritionDashboard'
 import { RecipePalette } from './RecipePalette'
 import { AddExtraDialog } from './AddExtraDialog'
+import { PlannerChat } from './PlannerChat'
 
 // ── dnd-kit id helpers ──────────────────────────────────────────────────────
 const entryDragId = (entryId: string) => `entry:${entryId}`
@@ -338,7 +340,14 @@ export function PlanEditorPage() {
 
   const [activeDayIndex, setActiveDayIndex] = useState(0)
   const [activeDrag, setActiveDrag] = useState<{ title: string } | null>(null)
-  const [extraTarget, setExtraTarget] = useState<{ windowId: string; windowName: string } | null>(null)
+  const [extraTarget, setExtraTarget] = useState<{
+    windowId: string
+    windowName: string
+    initialQuery?: string
+    initialAmount?: number
+    initialUnit?: IngredientUnit
+  } | null>(null)
+  const [chatOpen, setChatOpen] = useState(false)
 
   const addEntry = useAddEntry(planId)
   const updateEntry = useUpdateEntry(planId)
@@ -416,6 +425,10 @@ export function PlanEditorPage() {
             {plan.clientName} · {t(`planner.period.${plan.period}`)} · {t(`planner.status.${plan.status}`)}
           </p>
         </div>
+        <Button variant="outline" onClick={() => setChatOpen(true)}>
+          <Sparkles className="h-4 w-4" />
+          {t('planner.chat.open')}
+        </Button>
       </div>
 
       {plan.period === 'week' && (
@@ -510,14 +523,40 @@ export function PlanEditorPage() {
         open={extraTarget != null}
         windowId={extraTarget?.windowId ?? null}
         windowName={extraTarget?.windowName ?? ''}
+        initialQuery={extraTarget?.initialQuery}
+        initialAmount={extraTarget?.initialAmount}
+        initialUnit={extraTarget?.initialUnit}
         isAdding={addExtra.isPending}
         onClose={() => setExtraTarget(null)}
         onAdd={(input) => {
           addExtra.mutate(input, { onSuccess: () => setExtraTarget(null) })
         }}
       />
+
+      {chatOpen && (
+        <PlannerChat
+          planId={plan.id}
+          plan={plan}
+          onClose={() => setChatOpen(false)}
+          onApplyMultiplier={(entryId, m) =>
+            updateEntry.mutate({ entryId, patch: { servingMultiplier: m } })
+          }
+          onProposeExtra={(windowId, foodQuery, amount, unit) => {
+            const name = findWindowName(plan, windowId)
+            setExtraTarget({ windowId, windowName: name ?? '', initialQuery: foodQuery, initialAmount: amount, initialUnit: unit })
+          }}
+        />
+      )}
     </div>
   )
+}
+
+function findWindowName(plan: MealPlanDto, windowId: string): string | undefined {
+  for (const day of plan.days) {
+    const w = day.windows.find((x) => x.id === windowId)
+    if (w) return w.name
+  }
+  return undefined
 }
 
 function findEntry(plan: MealPlanDto | undefined, entryId: string): MealEntryDto | undefined {

@@ -234,6 +234,13 @@
       "instructions": "Preparare",
       "notes": "Note",
       "storage": "Păstrare",
+      "photo": "Fotografie",
+      "addPhoto": "Adaugă o fotografie",
+      "changePhoto": "Schimbă",
+      "removePhoto": "Elimină",
+      "photoHint": "JPG, PNG sau WebP",
+      "photoInvalid": "Alege un fișier imagine.",
+      "photoError": "Imaginea nu a putut fi procesată.",
       "cancel": "Anulează",
       "saving": "Se salvează…",
       "create": "Creează rețeta",
@@ -241,6 +248,7 @@
       "createTitle": "Rețetă nouă",
       "editTitle": "Editează rețeta",
       "titleRequired": "Titlul este obligatoriu",
+      "invalid": "Verifică câmpurile evidențiate.",
       "saveError": "Nu s-a putut salva rețeta."
     },
     "editor": {
@@ -365,6 +373,24 @@
       "days": "Zile",
       "day": "Ziua {n}",
       "noDays": "Acest plan nu are zile."
+    },
+    "chat": {
+      "open": "Asistent AI",
+      "title": "Asistent de planificare",
+      "close": "Închide",
+      "intro": "Cere ajutor pentru echilibrarea planului – ex. „adaugă mai multe proteine la prânz” sau „ziua aceasta depășește caloriile”.",
+      "disclaimer": "Sugestiile sunt doar propuneri. Nimic nu se schimbă până nu aplici, iar fiecare număr rămâne determinist.",
+      "unavailable": "Asistentul este indisponibil momentan. Încearcă din nou în scurt timp.",
+      "thinking": "Se gândește…",
+      "placeholder": "Întreabă asistentul…",
+      "send": "Trimite",
+      "setMultiplier": "Setează {title} la ×{mult}",
+      "staleEntry": "o intrare",
+      "addFood": "Adaugă {food} ({amount} {unit}) la {window}",
+      "staleWindow": "o masă",
+      "apply": "Aplică",
+      "chooseFood": "Alege alimentul…",
+      "applied": "Aplicat ✓"
     }
   },
   "sample": {

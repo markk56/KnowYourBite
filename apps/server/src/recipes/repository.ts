@@ -104,6 +104,7 @@ export const recipesRepository = {
     input: {
       title: string
       servings: number
+      imageUrl?: string | null
       instructions?: string
       prepTimeMinutes?: number
       cookTimeMinutes?: number
@@ -117,6 +118,7 @@ export const recipesRepository = {
         tenantId,
         title: input.title,
         servings: input.servings,
+        imageUrl: input.imageUrl ?? null,
         instructions: input.instructions ?? null,
         prepTimeMinutes: input.prepTimeMinutes ?? null,
         cookTimeMinutes: input.cookTimeMinutes ?? null,
@@ -134,6 +136,7 @@ export const recipesRepository = {
     patch: Partial<{
       title: string
       servings: number
+      imageUrl: string | null
       instructions: string | null
       prepTimeMinutes: number | null
       cookTimeMinutes: number | null

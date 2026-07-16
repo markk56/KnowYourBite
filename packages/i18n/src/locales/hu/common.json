@@ -234,6 +234,13 @@
       "instructions": "Elkészítés",
       "notes": "Megjegyzések",
       "storage": "Tárolás",
+      "photo": "Fénykép",
+      "addPhoto": "Fénykép hozzáadása",
+      "changePhoto": "Csere",
+      "removePhoto": "Eltávolítás",
+      "photoHint": "JPG, PNG vagy WebP",
+      "photoInvalid": "Válassz egy képfájlt.",
+      "photoError": "A kép feldolgozása nem sikerült.",
       "cancel": "Mégse",
       "saving": "Mentés…",
       "create": "Recept létrehozása",
@@ -241,6 +248,7 @@
       "createTitle": "Új recept",
       "editTitle": "Recept szerkesztése",
       "titleRequired": "A cím kötelező",
+      "invalid": "Ellenőrizd a kiemelt mezőket.",
       "saveError": "Nem sikerült menteni a receptet."
     },
     "editor": {
@@ -365,6 +373,24 @@
       "days": "Napok",
       "day": "{n}. nap",
       "noDays": "Ennek az étrendnek nincsenek napjai."
+    },
+    "chat": {
+      "open": "MI asszisztens",
+      "title": "Tervező asszisztens",
+      "close": "Bezárás",
+      "intro": "Kérj segítséget az étrend egyensúlyához – pl. „adj több fehérjét az ebédhez” vagy „ez a nap túllépi a kalóriát”.",
+      "disclaimer": "A javaslatok csak ajánlások. Semmi sem változik, amíg nem alkalmazod, és minden szám determinisztikus marad.",
+      "unavailable": "Az asszisztens jelenleg nem elérhető. Próbáld újra hamarosan.",
+      "thinking": "Gondolkodom…",
+      "placeholder": "Kérdezd az asszisztenst…",
+      "send": "Küldés",
+      "setMultiplier": "{title} beállítása ×{mult} értékre",
+      "staleEntry": "egy tétel",
+      "addFood": "{food} ({amount} {unit}) hozzáadása ehhez: {window}",
+      "staleWindow": "egy étkezés",
+      "apply": "Alkalmaz",
+      "chooseFood": "Étel kiválasztása…",
+      "applied": "Alkalmazva ✓"
     }
   },
   "sample": {

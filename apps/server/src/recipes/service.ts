@@ -79,6 +79,7 @@ export async function updateRecipe(
   const set: Record<string, unknown> = {}
   if (patch.title !== undefined) set.title = patch.title
   if (patch.servings !== undefined) set.servings = patch.servings
+  if (patch.imageUrl !== undefined) set.imageUrl = patch.imageUrl // string sets it, null clears it
   if ('instructions' in patch) set.instructions = patch.instructions ?? null
   if ('prepTimeMinutes' in patch) set.prepTimeMinutes = patch.prepTimeMinutes ?? null
   if ('cookTimeMinutes' in patch) set.cookTimeMinutes = patch.cookTimeMinutes ?? null

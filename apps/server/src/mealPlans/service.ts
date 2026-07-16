@@ -10,11 +10,17 @@ import {
   type MealPlanDto,
   type MealPlanSummaryDto,
   type MealPlanUpdateInput,
+  type PlannerChatMessage,
+  type PlannerChatResponse,
+  type PlannerProposal,
   type UpdateEntryInput,
   type UpdateExtraInput,
   type UpdateWindowInput,
 } from '@kyb/shared'
 import { resolveFood, UsdaNormalizationError } from '../usda/cache'
+import { isAiEnabled, PLANNER_MODEL, PLANNER_PROMPT_VERSION } from '../ai/anthropic'
+import { proposePlannerActions, PlannerUpstreamUnavailableError } from '../ai/plannerProposer'
+import { recordAiInteraction } from '../ai/audit'
 import {
   assembleMealPlanDto,
   assembleSummaryDto,
@@ -438,6 +444,106 @@ export async function removeExtra(
   if (!extra || extra.planId !== planId) throw new ServiceError('NOT_FOUND', 'Meal extra not found')
   await repo.deleteExtra(tenantId, extraId)
   return getPlan(tenantId, planId)
+}
+
+// ── AI planning chat (slice 4) — propose-only, audited, degrades gracefully ────
+
+/**
+ * Compact, pseudonymized textual context for the assistant. Deliberately omits the
+ * client name and any identifier — only nutritional data, food titles, and the ids
+ * the assistant references. Built from the deterministic plan DTO.
+ */
+function buildPlannerContext(plan: MealPlanDto): string {
+  const lines: string[] = [`Plan period: ${plan.period}`]
+  lines.push(
+    plan.target
+      ? `Daily target: ${plan.target.targetKcal} kcal, protein ${plan.target.proteinG} g, carbs ${plan.target.carbsG} g, fat ${plan.target.fatG} g.`
+      : 'No daily target has been set for this plan.',
+  )
+  for (const day of plan.days) {
+    lines.push(`\nDay ${day.dayIndex + 1} (total ${day.nutrition.kcal} kcal):`)
+    if (day.targetComparison) {
+      lines.push(`  remaining vs target: ${day.targetComparison.remaining.kcal} kcal.`)
+    }
+    for (const w of day.windows) {
+      lines.push(`  Window [${w.id}] "${w.name}" (${w.nutrition.kcal} kcal):`)
+      for (const e of w.entries) {
+        const allerg = e.allergens.length ? ` allergens: ${e.allergens.join(', ')};` : ''
+        lines.push(
+          `    - entry [${e.id}] "${e.recipeTitle}" ×${e.servingMultiplier} = ${e.contribution.kcal} kcal;${allerg}`,
+        )
+      }
+      for (const x of w.extras) {
+        lines.push(`    - extra "${x.canonicalNameEn}" ${x.gramsResolved} g = ${x.contribution.kcal} kcal`)
+      }
+    }
+  }
+  return lines.join('\n')
+}
+
+async function recordChatAudit(
+  tenantId: string,
+  clientId: string,
+  systemDecision: 'proposed' | 'unavailable',
+  rawOutput?: unknown,
+  proposedValues?: unknown,
+): Promise<void> {
+  await recordAiInteraction({
+    tenantId,
+    clientId,
+    feature: 'mealplan_chat',
+    model: PLANNER_MODEL,
+    promptVersion: PLANNER_PROMPT_VERSION,
+    systemDecision,
+    rawOutput,
+    proposedValues,
+  })
+}
+
+/**
+ * Run one turn of the planning assistant. Loads the plan (cross-tenant → 404),
+ * builds a pseudonymized context, asks sonnet-5, and returns propose-only actions
+ * filtered to ids that actually exist in the plan. Never auto-applies; degrades to
+ * `status:'unavailable'` when the API is off/unreachable. Audited either way.
+ */
+export async function chatPlanner(
+  tenantId: string,
+  planId: string,
+  messages: PlannerChatMessage[],
+): Promise<PlannerChatResponse> {
+  const plan = await getPlan(tenantId, planId) // throws NOT_FOUND if absent/other-tenant
+
+  if (!isAiEnabled()) {
+    await recordChatAudit(tenantId, plan.clientId, 'unavailable')
+    return { reply: '', proposals: [], status: 'unavailable' }
+  }
+
+  try {
+    const { reply, proposals, rawOutput } = await proposePlannerActions(
+      buildPlannerContext(plan),
+      messages,
+    )
+    // Drop any proposal that references an id not present in the plan (anti-hallucination).
+    const entryIds = new Set<string>()
+    const windowIds = new Set<string>()
+    for (const day of plan.days) {
+      for (const w of day.windows) {
+        windowIds.add(w.id)
+        for (const e of w.entries) entryIds.add(e.id)
+      }
+    }
+    const valid: PlannerProposal[] = proposals.filter((p) =>
+      p.tool === 'setServingMultiplier' ? entryIds.has(p.entryId) : windowIds.has(p.windowId),
+    )
+    await recordChatAudit(tenantId, plan.clientId, 'proposed', rawOutput, valid)
+    return { reply, proposals: valid, status: 'ok' }
+  } catch (e) {
+    if (e instanceof PlannerUpstreamUnavailableError) {
+      await recordChatAudit(tenantId, plan.clientId, 'unavailable')
+      return { reply: '', proposals: [], status: 'unavailable' }
+    }
+    throw e
+  }
 }
 
 function round2(v: number): number {

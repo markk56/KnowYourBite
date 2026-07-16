@@ -15,6 +15,10 @@ export const ASSESSMENT_PROMPT_VERSION = 'assessment-v1'
 export const ALLERGEN_MODEL = 'claude-haiku-4-5-20251001'
 export const ALLERGEN_PROMPT_VERSION = 'allergen-v1'
 
+/** Meal-plan assistant chat — conversational, propose-only (ADR §6 routing). */
+export const PLANNER_MODEL = 'claude-sonnet-5'
+export const PLANNER_PROMPT_VERSION = 'planner-v1'
+
 let client: Anthropic | undefined
 
 export function isAiEnabled(): boolean {

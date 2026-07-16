@@ -107,9 +107,24 @@ const optionalMinutes = z.preprocess(
   z.number().int().min(0).max(6000).optional(),
 )
 
+/** A recipe cover photo: an inline image data URL (compressed client-side) or an
+ *  http(s) URL. `''` clears the photo (→ null); omitting the field leaves it
+ *  unchanged. Capped at ~3M chars (~2.2 MB decoded) so a giant paste can't slip
+ *  past the server body limit. */
+const isStorableImage = (v: string) =>
+  /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(v) || /^https?:\/\//i.test(v)
+
+export const recipeImageInputSchema = z.preprocess(
+  (v) => (v === '' ? null : v),
+  z
+    .union([z.string().trim().max(3_000_000).refine(isStorableImage, 'Unsupported image'), z.null()])
+    .optional(),
+)
+
 export const recipeCreateInputSchema = z.object({
   title: z.string().trim().min(1, 'Title is required').max(200),
   servings: z.number().int().min(1).max(100).default(1),
+  imageUrl: recipeImageInputSchema,
   instructions: optionalText(20000),
   prepTimeMinutes: optionalMinutes,
   cookTimeMinutes: optionalMinutes,

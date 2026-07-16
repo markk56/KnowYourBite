@@ -6,6 +6,8 @@ import type {
   MealPlanDto,
   MealPlanSummaryDto,
   MealPlanUpdateInput,
+  PlannerChatMessage,
+  PlannerChatResponse,
   UpdateEntryInput,
   UpdateExtraInput,
   UpdateWindowInput,
@@ -80,4 +82,11 @@ export const mealPlansApi = {
     apiFetch<{ plan: MealPlanDto }>(`/meal-plans/${id}/extras/${extraId}`, {
       method: 'DELETE',
     }).then((r) => r.plan),
+
+  /** One turn of the propose-only planning assistant. Returns reply + validated proposals. */
+  chat: (id: string, messages: PlannerChatMessage[]) =>
+    apiFetch<PlannerChatResponse>(`/meal-plans/${id}/chat`, {
+      method: 'POST',
+      body: JSON.stringify({ messages }),
+    }),
 }

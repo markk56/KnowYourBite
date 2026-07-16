@@ -7,6 +7,7 @@ import {
   mealPlanCreateInputSchema,
   mealPlanUpdateInputSchema,
   ok,
+  plannerChatRequestSchema,
   statusForCode,
   updateEntryInputSchema,
   updateExtraInputSchema,
@@ -16,6 +17,7 @@ import {
   addEntry,
   addExtra,
   addWindow,
+  chatPlanner,
   createPlan,
   deletePlan,
   getPlan,
@@ -187,6 +189,19 @@ export function createMealPlansRouter(): Router {
     run(res, next, async () => {
       const plan = await removeExtra(req.tenantId!, req.params.id, req.params.extraId)
       res.json(ok({ plan }))
+    })
+  })
+
+  // ── AI planning chat (propose-only) ─────────────────────────────────────────
+  router.post('/:id/chat', (req, res, next) => {
+    run(res, next, async () => {
+      const parsed = plannerChatRequestSchema.safeParse(req.body)
+      if (!parsed.success) {
+        res.status(400).json(err('VALIDATION_ERROR', 'Invalid chat request', parsed.error.flatten()))
+        return
+      }
+      const result = await chatPlanner(req.tenantId!, req.params.id, parsed.data.messages)
+      res.json(ok(result))
     })
   })
 
