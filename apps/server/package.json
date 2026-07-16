@@ -21,6 +21,7 @@
     "helmet": "^8.0.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "pdfmake": "^0.2.12",
     "uuidv7": "^1.0.2",
     "vite": "^5.4.11",
     "ws": "^8.18.0"
@@ -31,6 +32,7 @@
     "@types/express-session": "^1.18.1",
     "@types/passport": "^1.0.17",
     "@types/passport-local": "^1.0.38",
+    "@types/pdfmake": "^0.2.9",
     "@types/supertest": "^6.0.2",
     "@types/ws": "^8.5.13",
     "supertest": "^7.0.0"
