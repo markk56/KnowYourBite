@@ -3,16 +3,23 @@ import { Link, useLocation, useParams } from 'wouter'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft, ClipboardList, Sparkles } from 'lucide-react'
 import {
+  isEmptyEntryRow,
+  isEmptyPayloadValue,
+  isEntryRowArray,
+  pruneAssessmentPayload,
   sectionsForType,
   type AssessmentDraftInput,
   type AssessmentDto,
   type AssessmentField,
+  type AssessmentPayload,
+  type AssessmentPayloadValue,
   type FinishWithAiResult,
   type Sex,
 } from '@kyb/shared'
 import { useMutation } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { useClient } from '@/clients/queries'
+import { groupFoodPreferences, useFoodPreferences } from '@/settings/queries'
 import { FormEngine } from './FormEngine'
 import { FinishWithAiPanel } from './FinishWithAiPanel'
 import { assessmentsApi } from './api'
@@ -24,7 +31,7 @@ interface FormValues {
   heightCm: string
   weightKg: string
   activityFactor: string
-  payload: Record<string, string>
+  payload: Record<string, AssessmentPayloadValue>
 }
 
 const numOrNull = (s: string): number | null => (s.trim() === '' ? null : Number(s))
@@ -36,9 +43,8 @@ function fromAssessment(a: AssessmentDto): FormValues {
     heightCm: a.heightCm != null ? String(a.heightCm) : '',
     weightKg: a.weightKg != null ? String(a.weightKg) : '',
     activityFactor: a.activityFactor != null ? String(a.activityFactor) : '',
-    payload: Object.fromEntries(
-      Object.entries(a.payload ?? {}).map(([k, v]) => [k, v == null ? '' : String(v)]),
-    ),
+    // Values keep their stored shape — structured answers pass straight through.
+    payload: { ...(a.payload ?? {}) },
   }
 }
 
@@ -137,6 +143,13 @@ function DraftEditor({
   const [finishResult, setFinishResult] = useState<FinishWithAiResult | null>(null)
   const save = useSaveDraft(clientId, assessment.id)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const { data: foodItems, isError: foodPrefsError } = useFoodPreferences()
+  // On a failed load fall back to empty lists — the pickers stay editable
+  // ("other" + already-stored chips) instead of a permanent loading state.
+  const foodOptions = useMemo(
+    () => (foodPrefsError ? {} : groupFoodPreferences(foodItems)),
+    [foodItems, foodPrefsError],
+  )
 
   const sections = useMemo(() => sectionsForType(assessment.type), [assessment.type])
   const numericPayloadKeys = useMemo(() => {
@@ -148,33 +161,58 @@ function DraftEditor({
   }, [sections])
 
   const toDraft = (v: FormValues): AssessmentDraftInput => {
-    const payload: Record<string, string | number> = {}
+    const sex = v.sex ? (v.sex as Sex) : null
+    const payload: AssessmentPayload = {}
     for (const [k, raw] of Object.entries(v.payload)) {
-      if (raw.trim() === '') continue
-      payload[k] = numericPayloadKeys.has(k) ? Number(raw) : raw
+      let val: AssessmentPayloadValue = raw
+      if (typeof val === 'string') {
+        if (val.trim() === '') continue
+        if (numericPayloadKeys.has(k)) val = Number(val)
+      }
+      if (isEntryRowArray(val)) val = val.filter((row) => !isEmptyEntryRow(row))
+      if (isEmptyPayloadValue(val)) continue
+      payload[k] = val
     }
     return {
-      sex: v.sex ? (v.sex as Sex) : null,
+      sex,
       ageYears: v.ageYears.trim() === '' ? null : Math.round(Number(v.ageYears)),
       heightCm: numOrNull(v.heightCm),
       weightKg: numOrNull(v.weightKg),
       activityFactor: numOrNull(v.activityFactor),
-      payload,
+      // Answers hidden by a failed visibleIf (e.g. women's health for a male
+      // client) never persist — the draft stays free of contradictory data.
+      payload: pruneAssessmentPayload(payload, sex),
     }
   }
 
+  // Flush (not just cancel) any pending debounced save when the editor
+  // unmounts, so navigating away right after typing never loses the last edits.
+  const flushPending = useRef<() => void>(() => {})
   const scheduleSave = (next: FormValues) => {
     if (timer.current) clearTimeout(timer.current)
-    timer.current = setTimeout(() => save.mutate(toDraft(next)), 800)
+    timer.current = setTimeout(() => {
+      timer.current = null
+      save.mutate(toDraft(next))
+    }, 800)
+    flushPending.current = () => {
+      if (timer.current !== null) {
+        clearTimeout(timer.current)
+        timer.current = null
+        save.mutate(toDraft(next))
+      }
+    }
   }
-  useEffect(() => () => timer.current !== null && clearTimeout(timer.current), [])
+  useEffect(() => () => flushPending.current(), [])
 
-  const getValue = (field: AssessmentField): string =>
+  const getValue = (field: AssessmentField): unknown =>
     field.bind ? values[field.bind] : (values.payload[field.key] ?? '')
 
-  const onChange = (field: AssessmentField, value: string) => {
+  /** Resolve a `visibleIf` key — same rule as `pruneAssessmentPayload` ('sex' or a payload key). */
+  const valueForKey = (key: string): unknown => (key === 'sex' ? values.sex : values.payload[key])
+
+  const onChange = (field: AssessmentField, value: AssessmentPayloadValue) => {
     const next: FormValues = field.bind
-      ? { ...values, [field.bind]: value }
+      ? { ...values, [field.bind]: typeof value === 'string' ? value : String(value ?? '') }
       : { ...values, payload: { ...values.payload, [field.key]: value } }
     setValues(next)
     scheduleSave(next)
@@ -182,7 +220,10 @@ function DraftEditor({
 
   const finish = useMutation({
     mutationFn: async () => {
-      if (timer.current) clearTimeout(timer.current)
+      if (timer.current) {
+        clearTimeout(timer.current)
+        timer.current = null // the unmount flush must not re-fire a stale save
+      }
       await save.mutateAsync(toDraft(values)) // flush before finishing
       return assessmentsApi.finish(clientId, assessment.id)
     },
@@ -223,14 +264,25 @@ function DraftEditor({
           <ArrowLeft className="h-4 w-4" />
           {t('assessments.back')}
         </Link>
-        <span className="text-xs text-muted-foreground">
-          {save.isPending ? t('assessments.saving') : t('assessments.saved')}
+        <span className={save.isError ? 'text-xs text-destructive' : 'text-xs text-muted-foreground'}>
+          {save.isPending
+            ? t('assessments.saving')
+            : save.isError
+              ? t('assessments.saveFailed')
+              : t('assessments.saved')}
         </span>
       </div>
 
       <h2 className="text-xl font-bold text-foreground">{t('assessments.title')}</h2>
 
-      <FormEngine sections={sections} getValue={getValue} onChange={onChange} disabled={finish.isPending} />
+      <FormEngine
+        sections={sections}
+        getValue={getValue}
+        onChange={onChange}
+        disabled={finish.isPending}
+        valueForKey={valueForKey}
+        foodOptions={foodOptions}
+      />
 
       {finish.error && <p className="text-sm text-destructive">{t('assessments.finishError')}</p>}
 

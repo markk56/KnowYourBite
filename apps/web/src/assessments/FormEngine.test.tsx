@@ -4,10 +4,17 @@ import { sectionsForType, type AssessmentField } from '@kyb/shared'
 import '@/i18n'
 import { FormEngine } from './FormEngine'
 
-function renderEngine(type: 'standard' | 'sports', onChange = vi.fn()) {
-  const values: Record<string, string> = {}
+function renderEngine(type: 'standard' | 'sports', values: Record<string, unknown> = {}, onChange = vi.fn()) {
   const getValue = (f: AssessmentField) => values[f.bind ?? f.key] ?? ''
-  render(<FormEngine sections={sectionsForType(type)} getValue={getValue} onChange={onChange} />)
+  const valueForKey = (key: string) => values[key]
+  render(
+    <FormEngine
+      sections={sectionsForType(type)}
+      getValue={getValue}
+      onChange={onChange}
+      valueForKey={valueForKey}
+    />,
+  )
   return { onChange }
 }
 
@@ -43,5 +50,54 @@ describe('FormEngine (schema-driven renderer)', () => {
     const [field, value] = onChange.mock.calls.at(-1)!
     expect(field.key).toBe('energyLevel')
     expect(value).toBe('7')
+  })
+
+  it("hides the women's-health block unless the client is female", () => {
+    renderEngine('standard', { sex: 'male' })
+    expect(screen.queryByText("Women's health")).not.toBeInTheDocument()
+  })
+
+  it("shows the women's-health block for a female client", () => {
+    renderEngine('standard', { sex: 'female' })
+    expect(screen.getByText("Women's health")).toBeInTheDocument()
+    expect(screen.getByText('PMS symptoms')).toBeInTheDocument()
+  })
+
+  it('reveals the allergen checklist only after a "yes"', () => {
+    renderEngine('standard')
+    expect(screen.queryByText('Gluten')).not.toBeInTheDocument()
+  })
+
+  it('lists allergen chips once the yes/no is true', () => {
+    const { onChange } = renderEngine('standard', { foodAllergyHas: true })
+    fireEvent.click(screen.getByRole('button', { name: 'Gluten' }))
+    const [field, value] = onChange.mock.calls.at(-1)!
+    expect(field.key).toBe('foodAllergyItems')
+    expect(value).toEqual({ selected: ['gluten'], other: undefined })
+  })
+
+  it('emits a structured frequency row when an item chip is toggled', () => {
+    const { onChange } = renderEngine('standard')
+    fireEvent.click(screen.getByRole('button', { name: 'Coffee' }))
+    const [field, value] = onChange.mock.calls.at(-1)!
+    expect(field.key).toBe('consumptionFrequency')
+    expect(value).toEqual([{ item: 'coffee', times: null, period: 'week', custom: false }])
+  })
+
+  it('emits a quantity+unit answer for daily water', () => {
+    const { onChange } = renderEngine('standard')
+    const inputs = screen.getAllByLabelText('How much water per day?')
+    fireEvent.change(inputs[0]!, { target: { value: '2' } })
+    const [field, value] = onChange.mock.calls.at(-1)!
+    expect(field.key).toBe('waterIntake')
+    expect(value).toEqual({ value: 2, unit: 'glass' })
+  })
+
+  it('renders the 24h recall rows with a time picker', () => {
+    const { onChange } = renderEngine('standard')
+    fireEvent.change(screen.getByLabelText('Breakfast — Time'), { target: { value: '07:30' } })
+    const [field, value] = onChange.mock.calls.at(-1)!
+    expect(field.key).toBe('breakfast')
+    expect(value).toEqual({ time: '07:30', text: '' })
   })
 })

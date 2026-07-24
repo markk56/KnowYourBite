@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { FoodPreferenceCategory } from './foodPreferences'
 
 /**
  * Assessments contract (Milestone 2) — the schema-driven anamnesis engine (ADR
@@ -14,6 +15,11 @@ import { z } from 'zod'
  * The five Harris–Benedict inputs (sex, age, height, weight, activity factor) are
  * NEVER in `payload` — they are first-class fields bound via `field.bind`, so the
  * deterministic math in `@kyb/domain` never parses free-form JSON.
+ *
+ * Structured answers: beyond primitives, `payload` values may be one of a small,
+ * bounded set of shapes (chip selections, quantity+unit, timed diary entries,
+ * repeating rows). Legacy free-text answers for reworked questions remain valid
+ * payload values — controls tolerate them and the AI prompt still includes them.
  */
 
 // ── Enums ────────────────────────────────────────────────────────────────────
@@ -42,6 +48,10 @@ export const AI_FEATURES = [
 ] as const
 export type AiFeature = (typeof AI_FEATURES)[number]
 
+/** Recurrence period for frequency answers (5× per day / week / month, or free-form). */
+export const FREQUENCY_PERIODS = ['day', 'week', 'month', 'other'] as const
+export type FrequencyPeriod = (typeof FREQUENCY_PERIODS)[number]
+
 // ── Field registry types ─────────────────────────────────────────────────────
 
 export interface LocalizedText {
@@ -57,10 +67,37 @@ export type AssessmentFieldKind =
   | 'select'
   | 'scale'
   | 'time'
+  | 'yesno'
+  | 'date'
+  | 'multiselect'
+  | 'quantityUnit'
+  | 'timedText'
+  | 'repeater'
+  | 'frequency'
+  | 'mealPicker'
 
 export interface FieldOption {
   value: string
   label: LocalizedText
+}
+
+export type RepeaterColumnKind = 'text' | 'number' | 'date'
+
+/** One column of a repeater row (e.g. surgery description + its date). */
+export interface RepeaterColumn {
+  key: string
+  label: LocalizedText
+  kind: RepeaterColumnKind
+  unit?: string
+  placeholder?: LocalizedText
+  /** Render only once the named sibling column has a value (date after text). */
+  showWhenFilled?: string
+}
+
+/** Conditional visibility: `key` is 'sex' or another field's payload key (other HB binds are not resolvable). */
+export interface VisibleIf {
+  key: string
+  equals: string | boolean
 }
 
 export interface AssessmentField {
@@ -68,18 +105,31 @@ export interface AssessmentField {
   label: LocalizedText
   kind: AssessmentFieldKind
   unit?: string
+  /** Selectable entries: select choices, multiselect/frequency chips, quantityUnit units. */
   options?: FieldOption[]
   placeholder?: LocalizedText
   /** First-class Harris–Benedict / activity binding; otherwise stored in `payload[key]`. */
   bind?: 'sex' | 'ageYears' | 'heightCm' | 'weightKg' | 'activityFactor'
   scaleMin?: number
   scaleMax?: number
+  /** multiselect: offer a free-text "other" entry alongside the chips. */
+  allowOther?: boolean
+  /** frequency: let the dietitian add custom items beyond `options`. */
+  allowCustomItems?: boolean
+  /** repeater: the columns of each row. */
+  columns?: RepeaterColumn[]
+  /** mealPicker: which nomenclator list feeds the chips. */
+  nomenclatorCategory?: FoodPreferenceCategory
+  /** Render only when the referenced answer matches (pruned from saves otherwise). */
+  visibleIf?: VisibleIf
 }
 
 export interface AssessmentSubgroup {
   key: string
   label: LocalizedText
   fields: AssessmentField[]
+  /** Render only when the referenced answer matches (e.g. women's health ⇔ sex=female). */
+  visibleIf?: VisibleIf
 }
 
 export interface AssessmentSection {
@@ -109,8 +159,19 @@ const num = (key: string, label: LocalizedText, unit: string): AssessmentField =
   unit,
 })
 const scale = (key: string, label: LocalizedText): AssessmentField => ({ key, label, kind: 'scale' })
+const yesno = (key: string, label: LocalizedText): AssessmentField => ({ key, label, kind: 'yesno' })
 
-// ── The questionnaire (Standard = sections 1–9 + reminders; Sports adds S1–S3) ─
+export const WEEKDAY_OPTIONS: FieldOption[] = [
+  { value: 'monday', label: L('Monday', 'Hétfő', 'Luni') },
+  { value: 'tuesday', label: L('Tuesday', 'Kedd', 'Marți') },
+  { value: 'wednesday', label: L('Wednesday', 'Szerda', 'Miercuri') },
+  { value: 'thursday', label: L('Thursday', 'Csütörtök', 'Joi') },
+  { value: 'friday', label: L('Friday', 'Péntek', 'Vineri') },
+  { value: 'saturday', label: L('Saturday', 'Szombat', 'Sâmbătă') },
+  { value: 'sunday', label: L('Sunday', 'Vasárnap', 'Duminică') },
+]
+
+// ── The questionnaire (Standard = shared sections + reminders; Sports adds S1–S3) ─
 
 export const ASSESSMENT_SECTIONS: AssessmentSection[] = [
   {
@@ -166,27 +227,61 @@ export const ASSESSMENT_SECTIONS: AssessmentSection[] = [
           'Boli în familie (ex. diabet, cardiovascular)',
         ),
       ),
-      area(
-        'hospitalizations',
-        L(
-          'Hospital treatment / surgery (with dates)',
-          'Volt-e kórházi kezelése, műtéte? (kezelés, dátum)',
-          'Tratamente / operații (cu date)',
+      {
+        key: 'hospitalizations',
+        kind: 'repeater',
+        label: L(
+          'Hospital treatments / surgeries',
+          'Volt-e kórházi kezelése, műtéte?',
+          'Tratamente spitalicești / operații',
         ),
-      ),
-      area(
-        'foodAllergies',
+        columns: [
+          {
+            key: 'treatment',
+            kind: 'text',
+            label: L('Treatment / surgery', 'Kezelés / műtét', 'Tratament / operație'),
+            placeholder: L('e.g. appendectomy', 'pl. vakbélműtét', 'ex. apendicectomie'),
+          },
+          { key: 'date', kind: 'date', label: L('Date', 'Dátum', 'Data'), showWhenFilled: 'treatment' },
+        ],
+      },
+      yesno(
+        'foodAllergyHas',
         L(
-          'Known food allergy or intolerance',
+          'Known food allergy or intolerance?',
           'Van-e ismert ételallergiája vagy intoleranciája?',
-          'Alergie sau intoleranță alimentară cunoscută',
+          'Alergie sau intoleranță alimentară cunoscută?',
         ),
       ),
+      {
+        key: 'foodAllergyItems',
+        kind: 'multiselect',
+        allowOther: true,
+        visibleIf: { key: 'foodAllergyHas', equals: true },
+        label: L('Which ones?', 'Melyek ezek?', 'Care sunt acestea?'),
+        options: [
+          { value: 'gluten', label: L('Gluten', 'Glutén', 'Gluten') },
+          { value: 'lactose', label: L('Lactose', 'Laktóz', 'Lactoză') },
+          { value: 'milk_protein', label: L('Milk protein', 'Tejfehérje', 'Proteine din lapte') },
+          { value: 'egg', label: L('Egg', 'Tojás', 'Ou') },
+          { value: 'peanut', label: L('Peanut', 'Földimogyoró', 'Arahide') },
+          { value: 'tree_nuts', label: L('Tree nuts', 'Diófélék', 'Nuci') },
+          { value: 'soy', label: L('Soy', 'Szója', 'Soia') },
+          { value: 'fish', label: L('Fish', 'Hal', 'Pește') },
+          { value: 'shellfish', label: L('Shellfish / seafood', 'Rák, kagyló (tenger gyümölcsei)', 'Fructe de mare') },
+          { value: 'sesame', label: L('Sesame', 'Szezámmag', 'Susan') },
+          { value: 'mustard', label: L('Mustard', 'Mustár', 'Muștar') },
+          { value: 'celery', label: L('Celery', 'Zeller', 'Țelină') },
+          { value: 'histamine', label: L('Histamine', 'Hisztamin', 'Histamină') },
+          { value: 'fructose', label: L('Fructose', 'Fruktóz', 'Fructoză') },
+        ],
+      },
     ],
     subgroups: [
       {
         key: 'womensHealth',
         label: L("Women's health", 'Női egészség', 'Sănătatea femeii'),
+        visibleIf: { key: 'sex', equals: 'female' },
         fields: [
           text(
             'menstrualCycle',
@@ -201,14 +296,20 @@ export const ASSESSMENT_SECTIONS: AssessmentSection[] = [
             L('Usual cycle length', 'Hány napos a ciklusa általában?', 'Durata obișnuită a ciclului'),
             'days',
           ),
-          area(
-            'pmsSymptoms',
-            L(
-              'PMS symptoms (mood swings, bloating, cramps, headache, cravings, acne)',
-              'PMS tünetek (hangulatingadozás, puffadás, görcsök, fejfájás, édesség utáni vágy, pattanások)',
-              'Simptome PMS (schimbări de dispoziție, balonare, crampe, dureri de cap, poftă de dulce, acnee)',
-            ),
-          ),
+          {
+            key: 'pmsSymptoms',
+            kind: 'multiselect',
+            allowOther: true,
+            label: L('PMS symptoms', 'PMS tünetek', 'Simptome PMS'),
+            options: [
+              { value: 'mood_swings', label: L('Mood swings', 'Hangulatingadozás', 'Schimbări de dispoziție') },
+              { value: 'bloating', label: L('Bloating', 'Puffadás', 'Balonare') },
+              { value: 'cramps', label: L('Cramps', 'Görcsök', 'Crampe') },
+              { value: 'headache', label: L('Headache', 'Fejfájás', 'Dureri de cap') },
+              { value: 'sweet_cravings', label: L('Sweet cravings', 'Édesség utáni vágy', 'Poftă de dulce') },
+              { value: 'acne', label: L('Acne', 'Pattanások', 'Acnee') },
+            ],
+          },
           text(
             'hormonalTreatment',
             L(
@@ -230,10 +331,16 @@ export const ASSESSMENT_SECTIONS: AssessmentSection[] = [
               'Ați alăptat și cât timp?',
             ),
           ),
-          text(
-            'menopause',
-            L('Reached menopause? When?', 'Belépett-e már a menopauzába? Ha igen, mikor?', 'Ați intrat la menopauză? Când?'),
+          yesno(
+            'menopauseEntered',
+            L('Reached menopause?', 'Belépett-e már a menopauzába?', 'Ați intrat la menopauză?'),
           ),
+          {
+            key: 'menopauseDate',
+            kind: 'date',
+            visibleIf: { key: 'menopauseEntered', equals: true },
+            label: L('If yes, when?', 'Ha igen, mikor?', 'Dacă da, când?'),
+          },
         ],
       },
     ],
@@ -330,24 +437,36 @@ export const ASSESSMENT_SECTIONS: AssessmentSection[] = [
       ),
       text('favoriteFoods', L('Favorite foods', 'Milyen ételeket szeret leginkább?', 'Mâncărurile preferate')),
       text('dislikedFoods', L('Disliked foods', 'Milyen ételeket nem szeret?', 'Mâncăruri pe care nu le agreați')),
-      text(
-        'avoidedFoods',
-        L(
-          'Foods avoided for health reasons',
-          'Van olyan étel amit egészségi okok miatt kerül?',
-          'Alimente evitate din motive de sănătate',
-        ),
-      ),
-      num('waterGlasses', L('Water per day', 'Mennyi vizet fogyaszt naponta', 'Apă pe zi'), 'glasses'),
-      num('waterLiters', L('Water per day', 'Mennyi vizet fogyaszt naponta', 'Apă pe zi'), 'L'),
-      area(
-        'consumptionFrequency',
-        L(
+      {
+        key: 'waterIntake',
+        kind: 'quantityUnit',
+        label: L('How much water per day?', 'Mennyi vizet fogyaszt naponta?', 'Câtă apă consumați pe zi?'),
+        options: [
+          { value: 'glass', label: L('glasses', 'pohár', 'pahare') },
+          { value: 'dl', label: L('dl', 'dl', 'dl') },
+          { value: 'l', label: L('litres', 'liter', 'litri') },
+        ],
+      },
+      {
+        key: 'consumptionFrequency',
+        kind: 'frequency',
+        label: L(
           'How often: coffee, tea, soft drinks, alcohol, meat, dairy, eggs, vegetables, fruit',
           'Mennyire gyakran: kávé, tea, üdítő, alkohol, hús, tejtermék, tojás, zöldség, gyümölcs',
           'Cât de des: cafea, ceai, băuturi carbogazoase, alcool, carne, lactate, ouă, legume, fructe',
         ),
-      ),
+        options: [
+          { value: 'coffee', label: L('Coffee', 'Kávé', 'Cafea') },
+          { value: 'tea', label: L('Tea', 'Tea', 'Ceai') },
+          { value: 'soft_drinks', label: L('Soft drinks', 'Üdítő', 'Băuturi carbogazoase') },
+          { value: 'alcohol', label: L('Alcohol', 'Alkohol', 'Alcool') },
+          { value: 'meat', label: L('Meat', 'Hús', 'Carne') },
+          { value: 'dairy', label: L('Dairy', 'Tejtermék', 'Lactate') },
+          { value: 'eggs', label: L('Eggs', 'Tojás', 'Ouă') },
+          { value: 'vegetables', label: L('Vegetables', 'Zöldség', 'Legume') },
+          { value: 'fruit', label: L('Fruit', 'Gyümölcs', 'Fructe') },
+        ],
+      },
       text(
         'sweetsFrequency',
         L('Sweets — frequency & type', 'Édességfogyasztás gyakorisága és típusa', 'Dulciuri — frecvență și tip'),
@@ -369,17 +488,142 @@ export const ASSESSMENT_SECTIONS: AssessmentSection[] = [
         ),
       ),
     ],
+  },
+  {
+    id: 'routine',
+    icon: '🕗',
+    title: L('Daily routine', 'Napi rutin', 'Rutină zilnică'),
+    appliesTo: 'all',
+    fields: [
+      { key: 'wakeTime', kind: 'time', label: L('Wake-up time', 'Mikor kel reggel?', 'Ora de trezire') },
+      { key: 'sleepTime', kind: 'time', label: L('Bedtime', 'Mikor fekszik le este?', 'Ora de culcare') },
+      text(
+        'routineRegularity',
+        L(
+          'Is your daily routine regular or variable?',
+          'Van rendszer a napirendjében, vagy inkább változó?',
+          'Rutina zilnică este regulată sau variabilă?',
+        ),
+      ),
+    ],
+  },
+  {
+    id: 'recall',
+    icon: '🕛',
+    title: L('Typical day (24h recall)', 'Egy átlagos nap (24 órás visszaidézés)', 'O zi obișnuită (rememorare 24h)'),
+    appliesTo: 'all',
+    fields: [
+      { key: 'breakfast', kind: 'timedText', label: L('Breakfast', 'Reggeli', 'Mic dejun') },
+      { key: 'snack1', kind: 'timedText', label: L('Snack', 'Nasi', 'Gustare') },
+      { key: 'lunch', kind: 'timedText', label: L('Lunch', 'Ebéd', 'Prânz') },
+      { key: 'snack2', kind: 'timedText', label: L('Snack', 'Nasi', 'Gustare') },
+      { key: 'dinner', kind: 'timedText', label: L('Dinner', 'Vacsora', 'Cină') },
+      { key: 'snack3', kind: 'timedText', label: L('Snack', 'Nasi', 'Gustare') },
+    ],
+  },
+  {
+    id: 'mealPreferences',
+    icon: '🍲',
+    title: L('Meal preferences', 'Étkezési preferenciák', 'Preferințe alimentare'),
+    appliesTo: 'all',
+    fields: [
+      {
+        key: 'repeatedDishes',
+        kind: 'repeater',
+        label: L(
+          'Which dish repeats, and how many times?',
+          'Melyik fogás ismétlődik és mennyiszer?',
+          'Ce fel de mâncare se repetă și de câte ori?',
+        ),
+        placeholder: L(
+          'e.g. a pot of soup eaten over 3 meals',
+          'pl. egy fazék leves 3 étkezésre elosztva',
+          'ex. o oală de supă mâncată la 3 mese',
+        ),
+        columns: [
+          {
+            key: 'dish',
+            kind: 'text',
+            label: L('Dish', 'Fogás', 'Fel de mâncare'),
+            placeholder: L('e.g. soup', 'pl. húsleves', 'ex. supă'),
+          },
+          {
+            key: 'times',
+            kind: 'number',
+            unit: '×',
+            label: L('How many times?', 'Hány alkalommal fogyasztja?', 'De câte ori?'),
+            showWhenFilled: 'dish',
+          },
+        ],
+      },
+      {
+        key: 'cookingDays',
+        kind: 'multiselect',
+        label: L(
+          'Which days do you usually have time to cook?',
+          'Melyik napokon van inkább ideje főzni?',
+          'În ce zile aveți de obicei timp să gătiți?',
+        ),
+        options: WEEKDAY_OPTIONS,
+      },
+      {
+        key: 'recipeOpenness',
+        kind: 'select',
+        label: L(
+          'How open are you to trying new recipes?',
+          'Mennyire szeretne új recepteket kipróbálni?',
+          'Cât de deschis sunteți să încercați rețete noi?',
+        ),
+        options: [
+          { value: 'full_reset', label: L('A completely new lifestyle', 'Teljesen új életmód', 'Un stil de viață complet nou') },
+          { value: 'loves_new', label: L('Loves novelty', 'Szereti az újdonságot', 'Îi plac noutățile') },
+          {
+            value: 'couple_per_week',
+            label: L('1–2 new recipes a week', 'Jöhet 1–2 új recept hetente', '1–2 rețete noi pe săptămână'),
+          },
+          { value: 'keep_usual', label: L('Only the usual', 'Csak a megszokott', 'Doar cele obișnuite') },
+        ],
+      },
+    ],
     subgroups: [
       {
-        key: 'recall',
-        label: L('Typical day (24h recall)', 'Egy átlagos nap (24 órás visszaidézés)', 'O zi obișnuită (rememorare 24h)'),
+        key: 'usualMeals',
+        label: L(
+          'Typical meals — tick what the client usually eats',
+          'Tipikus ételek — pipálja ki, amiket fogyasztani szokott',
+          'Mese tipice — bifați ce obișnuiește să mănânce',
+        ),
         fields: [
-          text('breakfast', L('Breakfast', 'Reggeli', 'Mic dejun')),
-          text('snack1', L('Snack', 'Nasi', 'Gustare')),
-          text('lunch', L('Lunch', 'Ebéd', 'Prânz')),
-          text('snack2', L('Snack', 'Nasi', 'Gustare')),
-          text('dinner', L('Dinner', 'Vacsora', 'Cină')),
-          text('snack3', L('Snack', 'Nasi', 'Gustare')),
+          {
+            key: 'favBreakfasts',
+            kind: 'mealPicker',
+            nomenclatorCategory: 'breakfast',
+            label: L('Breakfasts', 'Reggelik', 'Mic dejun'),
+          },
+          {
+            key: 'favLunches',
+            kind: 'mealPicker',
+            nomenclatorCategory: 'lunch',
+            label: L('Lunches', 'Ebédek', 'Prânzuri'),
+          },
+          {
+            key: 'favDinners',
+            kind: 'mealPicker',
+            nomenclatorCategory: 'dinner',
+            label: L('Dinners', 'Vacsorák', 'Cine'),
+          },
+          {
+            key: 'favSnacks',
+            kind: 'mealPicker',
+            nomenclatorCategory: 'snack',
+            label: L('Snacks', 'Nasik', 'Gustări'),
+          },
+          {
+            key: 'favDesserts',
+            kind: 'mealPicker',
+            nomenclatorCategory: 'dessert',
+            label: L('Desserts', 'Desszertek', 'Deserturi'),
+          },
         ],
       },
     ],
@@ -446,32 +690,25 @@ export const ASSESSMENT_SECTIONS: AssessmentSection[] = [
           },
         ],
       },
-      area(
-        'sportActivity',
-        L(
+      {
+        key: 'sportActivity',
+        kind: 'frequency',
+        allowCustomItems: true,
+        label: L(
           'Sport activity — which sport and how often?',
           'Sporttevékenység — milyen sport és milyen gyakran?',
           'Activitate sportivă — ce sport și cât de des?',
         ),
-      ),
-    ],
-  },
-  {
-    id: 'routine',
-    icon: '🕗',
-    title: L('Daily routine', 'Napi rutin', 'Rutină zilnică'),
-    appliesTo: 'all',
-    fields: [
-      { key: 'wakeTime', kind: 'time', label: L('Wake-up time', 'Mikor kel reggel?', 'Ora de trezire') },
-      { key: 'sleepTime', kind: 'time', label: L('Bedtime', 'Mikor fekszik le este?', 'Ora de culcare') },
-      text(
-        'routineRegularity',
-        L(
-          'Is your daily routine regular or variable?',
-          'Van rendszer a napirendjében, vagy inkább változó?',
-          'Rutina zilnică este regulată sau variabilă?',
-        ),
-      ),
+        options: [
+          { value: 'running', label: L('Running', 'Futás', 'Alergare') },
+          { value: 'cycling', label: L('Cycling', 'Kerékpározás', 'Ciclism') },
+          { value: 'gym', label: L('Gym / weight training', 'Konditerem / súlyzós edzés', 'Sală / antrenament cu greutăți') },
+          { value: 'swimming', label: L('Swimming', 'Úszás', 'Înot') },
+          { value: 'football', label: L('Football', 'Foci', 'Fotbal') },
+          { value: 'walking_hiking', label: L('Walking / hiking', 'Séta / túrázás', 'Plimbare / drumeții') },
+          { value: 'yoga_pilates', label: L('Yoga / pilates', 'Jóga / pilates', 'Yoga / pilates') },
+        ],
+      },
     ],
   },
   {
@@ -685,12 +922,140 @@ export const hbInputsSchema = z.object({
 })
 export type HbInputs = z.infer<typeof hbInputsSchema>
 
+// Structured answer shapes. Each is bounded so a payload can never balloon; the
+// union stays deliberately small — a new control means a new named shape here.
+
+const payloadPrimitive = z.union([z.string().max(5000), z.number(), z.boolean()]).nullable()
+
+/** Chip selections (+ optional free-text "other"): multiselect & mealPicker. */
+export const selectionValueSchema = z.object({
+  selected: z.array(z.string().max(300)).max(100),
+  other: z.string().max(2000).nullable().optional(),
+})
+export type SelectionValue = z.infer<typeof selectionValueSchema>
+
+/** A measured amount with its unit (e.g. daily water intake). */
+export const quantityValueSchema = z.object({
+  value: z.number().nullable(),
+  unit: z.string().max(30),
+})
+export type QuantityValue = z.infer<typeof quantityValueSchema>
+
+/** A diary entry: what + at which time (24h-recall rows). */
+export const timedTextValueSchema = z.object({
+  time: z.string().max(10),
+  text: z.string().max(2000),
+})
+export type TimedTextValue = z.infer<typeof timedTextValueSchema>
+
+/** One repeater/frequency row — a flat record of primitives (treatment+date, item+times+period…). */
+export const entryRowSchema = z.record(
+  z.string().max(40),
+  z.union([z.string().max(2000), z.number(), z.boolean()]).nullable(),
+)
+export type EntryRow = z.infer<typeof entryRowSchema>
+
+export const payloadValueSchema = z.union([
+  payloadPrimitive,
+  selectionValueSchema,
+  quantityValueSchema,
+  timedTextValueSchema,
+  z.array(entryRowSchema).max(100),
+])
+export type AssessmentPayloadValue = z.infer<typeof payloadValueSchema>
+
 /** Free-form questionnaire answers. Bounded value types + size; HB inputs are NOT here. */
-const payloadValue = z.union([z.string().max(5000), z.number(), z.boolean()]).nullable()
 export const assessmentPayloadSchema = z
-  .record(z.string().max(80), payloadValue)
+  .record(z.string().max(80), payloadValueSchema)
   .refine((o) => Object.keys(o).length <= 300, { message: 'Too many answer fields' })
 export type AssessmentPayload = z.infer<typeof assessmentPayloadSchema>
+
+// ── Structured-value helpers (shared by the form engine and the AI serializer) ─
+
+export function isSelectionValue(v: unknown): v is SelectionValue {
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && Array.isArray((v as SelectionValue).selected)
+}
+
+export function isQuantityValue(v: unknown): v is QuantityValue {
+  return (
+    typeof v === 'object' && v !== null && !Array.isArray(v) && 'unit' in v && 'value' in v && !('selected' in v)
+  )
+}
+
+export function isTimedTextValue(v: unknown): v is TimedTextValue {
+  if (typeof v !== 'object' || v === null || Array.isArray(v)) return false
+  const c = v as Record<string, unknown>
+  return typeof c.time === 'string' && typeof c.text === 'string'
+}
+
+export function isEntryRowArray(v: unknown): v is EntryRow[] {
+  return Array.isArray(v) && v.every((r) => typeof r === 'object' && r !== null && !Array.isArray(r))
+}
+
+/** A row whose every cell is null/blank contributes nothing and is dropped on save. */
+export function isEmptyEntryRow(row: EntryRow): boolean {
+  return Object.values(row).every((c) => c == null || (typeof c === 'string' && c.trim() === ''))
+}
+
+/** True when an answer carries no information (drives autosave payload slimming). */
+export function isEmptyPayloadValue(v: AssessmentPayloadValue | undefined): boolean {
+  if (v === undefined || v === null) return true
+  if (typeof v === 'string') return v.trim() === ''
+  if (typeof v === 'number' || typeof v === 'boolean') return false
+  if (Array.isArray(v)) return v.every(isEmptyEntryRow)
+  if (isSelectionValue(v)) return v.selected.length === 0 && (v.other ?? '').trim() === ''
+  if (isTimedTextValue(v)) return v.time.trim() === '' && v.text.trim() === ''
+  if (isQuantityValue(v)) return v.value === null
+  return false
+}
+
+// ── Conditional visibility + pruning ─────────────────────────────────────────
+
+function resolveConditionValue(key: string, payload: AssessmentPayload, sex: Sex | null): unknown {
+  return key === 'sex' ? sex : payload[key]
+}
+
+/** Evaluate a `visibleIf` condition against the current answers. */
+export function matchesVisibleIf(
+  cond: VisibleIf | undefined,
+  payload: AssessmentPayload,
+  sex: Sex | null,
+): boolean {
+  if (!cond) return true
+  return resolveConditionValue(cond.key, payload, sex) === cond.equals
+}
+
+/** Payload keys retired from the questionnaire whose answers hide with a subgroup. */
+const LEGACY_SUBGROUP_KEYS: Record<string, string[]> = {
+  womensHealth: ['menopause'],
+}
+
+/**
+ * Drop answers whose question is hidden by a failed `visibleIf` (e.g. the whole
+ * women's-health block for a male client, or the menopause date after switching
+ * back to "no"). Called before every draft save AND before the AI prompt is
+ * built, so contradictory answers neither persist nor reach the model.
+ */
+export function pruneAssessmentPayload(payload: AssessmentPayload, sex: Sex | null): AssessmentPayload {
+  const next: AssessmentPayload = { ...payload }
+  const remove = (key: string) => {
+    delete next[key]
+  }
+  for (const section of ASSESSMENT_SECTIONS) {
+    for (const field of section.fields ?? []) {
+      if (!field.bind && !matchesVisibleIf(field.visibleIf, payload, sex)) remove(field.key)
+    }
+    for (const group of section.subgroups ?? []) {
+      const groupVisible = matchesVisibleIf(group.visibleIf, payload, sex)
+      for (const field of group.fields) {
+        if (field.bind) continue
+        if (!groupVisible || !matchesVisibleIf(field.visibleIf, payload, sex)) remove(field.key)
+      }
+      if (!groupVisible) for (const legacy of LEGACY_SUBGROUP_KEYS[group.key] ?? []) remove(legacy)
+    }
+  }
+  return next
+}
 
 const optionalHb = {
   sex: z.enum(SEXES).nullable().optional(),

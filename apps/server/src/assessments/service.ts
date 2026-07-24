@@ -1,11 +1,14 @@
 import { resolveAssessmentTargets, type AssessmentType } from '@kyb/domain'
 import {
   hbInputsSchema,
+  pruneAssessmentPayload,
   type ApproveTargetsInput,
+  type AssessmentPayload,
   type AssessmentTargetsDto,
   type ErrorCode,
   type FinishWithAiResult,
   type HbInputs,
+  type Sex,
 } from '@kyb/shared'
 import type { ClientAssessmentRow } from '../db/schema'
 import { ASSESSMENT_PROMPT_VERSION, CLINICAL_MODEL, isAiEnabled } from '../ai/anthropic'
@@ -62,7 +65,12 @@ export async function finishWithAi(tenantId: string, row: ClientAssessmentRow): 
       const { proposal, rawOutput } = await proposeAssessment({
         type,
         hb,
-        payload: (row.payload ?? {}) as Record<string, string | number | boolean | null>,
+        // Answers hidden by a failed visibleIf (e.g. women's health for a male
+        // client) are pruned so contradictory data never reaches the model.
+        payload: pruneAssessmentPayload(
+          (row.payload ?? {}) as AssessmentPayload,
+          (row.sex as Sex | null) ?? null,
+        ),
         deterministic,
       })
       await assessmentsRepository.recordInteraction({

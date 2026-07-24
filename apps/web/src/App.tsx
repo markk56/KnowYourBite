@@ -13,6 +13,7 @@ import { RecipeListPage } from '@/recipes/RecipeListPage'
 import { RecipeEditorPage, RecipeCreatePage } from '@/recipes/RecipeEditorPage'
 import { PlannerListPage } from '@/planner/PlannerListPage'
 import { PlanEditorPage } from '@/planner/PlanEditorPage'
+import { SettingsPage } from '@/settings/SettingsPage'
 import { useCurrentUser } from '@/auth/useAuth'
 
 function ComingSoon({ titleKey }: { titleKey: string }) {
@@ -53,7 +54,7 @@ function Root() {
         <Route path="/recipes/:id" component={RecipeEditorPage} />
         <Route path="/planner" component={PlannerListPage} />
         <Route path="/planner/:id" component={PlanEditorPage} />
-        <Route path="/settings">{() => <ComingSoon titleKey="nav.settings" />}</Route>
+        <Route path="/settings" component={SettingsPage} />
         <Route>{() => <ComingSoon titleKey="nav.dashboard" />}</Route>
       </Switch>
     </AppShell>

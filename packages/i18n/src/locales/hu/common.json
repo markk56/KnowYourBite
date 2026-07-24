@@ -121,6 +121,7 @@
     "starting": "Indítás…",
     "saving": "Mentés…",
     "saved": "Mentve",
+    "saveFailed": "Nem sikerült menteni — ellenőrizze az utolsó választ",
     "finish": "Befejezés MI-vel",
     "finishing": "Elemzés…",
     "finishError": "Nem sikerült befejezni a felmérést.",
@@ -145,6 +146,25 @@
       "approving": "Jóváhagyás…",
       "approveError": "Nem sikerült jóváhagyni a célokat.",
       "noMetrics": "A testadatok (nem, életkor, magasság, testsúly, aktivitás) hiányoznak, ezért a kalória- és makrócélok nem számíthatók ki. Add meg a végső célokat kézzel alább."
+    },
+    "engine": {
+      "yes": "Igen",
+      "no": "Nem",
+      "loading": "Betöltés…",
+      "other": "Egyéb",
+      "otherPlaceholder": "Írja be a sajátját…",
+      "addRow": "Új sor",
+      "removeRow": "Sor törlése",
+      "customItemPlaceholder": "Másik sport vagy mozgásforma…",
+      "add": "Hozzáad",
+      "times": "hány alkalommal",
+      "period": "gyakoriság",
+      "periodDay": "naponta",
+      "periodWeek": "hetente",
+      "periodMonth": "havonta",
+      "periodOther": "egyéb",
+      "periodOtherPlaceholder": "pl. alkalmanként, ritkán",
+      "time": "Időpont"
     }
   },
   "recipes": {
@@ -395,5 +415,28 @@
   },
   "sample": {
     "clientCount": "{count, plural, one {# kliens} other {# kliens}}"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "loading": "Betöltés…",
+    "loadError": "A beállítások betöltése nem sikerült.",
+    "foodPrefs": {
+      "subtitle": "Az anamnézisben gyorsan kipipálható tipikus ételek — itt szerkesztheti a listákat.",
+      "empty": "Még nincs elem.",
+      "addPlaceholder": "Új étel…",
+      "add": "Hozzáad",
+      "rename": "Átnevezés",
+      "save": "Mentés",
+      "cancel": "Mégse",
+      "delete": "Törlés",
+      "saveError": "Nem sikerült menteni — lehet, hogy ez a név már szerepel a listán."
+    },
+    "category": {
+      "breakfast": "Reggelik",
+      "lunch": "Ebédek",
+      "dinner": "Vacsorák",
+      "snack": "Nasik",
+      "dessert": "Desszertek"
+    }
   }
 }

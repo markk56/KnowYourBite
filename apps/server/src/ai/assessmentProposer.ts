@@ -1,5 +1,18 @@
 import { clampCalorieAdjustmentPercent, type AssessmentType, type DeterministicTargets } from '@kyb/domain'
-import { aiAssessmentProposalSchema, type AiAssessmentProposal, type AssessmentPayload, type HbInputs } from '@kyb/shared'
+import {
+  aiAssessmentProposalSchema,
+  isEmptyEntryRow,
+  isEmptyPayloadValue,
+  isEntryRowArray,
+  isQuantityValue,
+  isSelectionValue,
+  isTimedTextValue,
+  type AiAssessmentProposal,
+  type AssessmentPayload,
+  type AssessmentPayloadValue,
+  type EntryRow,
+  type HbInputs,
+} from '@kyb/shared'
 import { CLINICAL_MODEL, getAnthropic } from './anthropic'
 import { assertNoDirectIdentifiers } from './pseudonymize'
 
@@ -91,10 +104,37 @@ export interface ProposalContext {
   deterministic: DeterministicTargets | null
 }
 
+/** One repeater/frequency row → `treatment: appendectomy, date: 2019-04-02`. */
+function formatEntryRow(row: EntryRow): string {
+  return Object.entries(row)
+    .filter(([, v]) => v != null && !(typeof v === 'string' && v.trim() === ''))
+    .map(([k, v]) => `${k}: ${String(v)}`)
+    .join(', ')
+}
+
+/** Render any (possibly structured) answer as compact prose for the prompt. */
+export function formatPayloadValue(v: AssessmentPayloadValue): string {
+  if (v === null) return ''
+  if (typeof v !== 'object') return String(v)
+  if (isSelectionValue(v)) {
+    const other = (v.other ?? '').trim()
+    return [...v.selected, ...(other ? [`other: ${other}`] : [])].join(', ')
+  }
+  if (isQuantityValue(v)) return v.value === null ? '' : `${v.value} ${v.unit}`.trim()
+  if (isTimedTextValue(v)) return v.time ? `${v.time} — ${v.text}` : v.text
+  if (isEntryRowArray(v)) {
+    return v
+      .filter((row) => !isEmptyEntryRow(row))
+      .map((row) => `(${formatEntryRow(row)})`)
+      .join('; ')
+  }
+  return JSON.stringify(v)
+}
+
 function buildUserPrompt(ctx: ProposalContext): string {
   const answers = Object.entries(ctx.payload)
-    .filter(([, v]) => v !== null && v !== '' && v !== undefined)
-    .map(([k, v]) => `- ${k}: ${String(v)}`)
+    .filter(([, v]) => !isEmptyPayloadValue(v))
+    .map(([k, v]) => `- ${k}: ${formatPayloadValue(v)}`)
     .join('\n')
   const metrics = ctx.hb
     ? `Client (de-identified): sex ${ctx.hb.sex}, age ${ctx.hb.ageYears}, height ${ctx.hb.heightCm} cm, weight ${ctx.hb.weightKg} kg, activity factor ${ctx.hb.activityFactor}.`

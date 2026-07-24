@@ -121,6 +121,7 @@
     "starting": "Starting…",
     "saving": "Saving…",
     "saved": "Saved",
+    "saveFailed": "Could not save — check the last answer",
     "finish": "Finish with AI",
     "finishing": "Analyzing…",
     "finishError": "Couldn't finish the assessment.",
@@ -145,6 +146,25 @@
       "approving": "Approving…",
       "approveError": "Couldn't approve the targets.",
       "noMetrics": "Body metrics (sex, age, height, weight, activity) weren't recorded, so calorie & macro targets can't be calculated. Enter the final targets below by hand."
+    },
+    "engine": {
+      "yes": "Yes",
+      "no": "No",
+      "loading": "Loading…",
+      "other": "Other",
+      "otherPlaceholder": "Add your own…",
+      "addRow": "Add row",
+      "removeRow": "Remove row",
+      "customItemPlaceholder": "Add another sport or activity…",
+      "add": "Add",
+      "times": "how many times",
+      "period": "frequency",
+      "periodDay": "a day",
+      "periodWeek": "a week",
+      "periodMonth": "a month",
+      "periodOther": "other",
+      "periodOtherPlaceholder": "e.g. occasionally",
+      "time": "Time"
     }
   },
   "recipes": {
@@ -395,5 +415,28 @@
   },
   "sample": {
     "clientCount": "{count, plural, one {# client} other {# clients}}"
+  },
+  "settings": {
+    "title": "Settings",
+    "loading": "Loading…",
+    "loadError": "Failed to load settings.",
+    "foodPrefs": {
+      "subtitle": "Typical meals shown as quick checklists in the anamnesis — curate the lists here.",
+      "empty": "No items yet.",
+      "addPlaceholder": "New item…",
+      "add": "Add",
+      "rename": "Rename",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "saveError": "Could not save — an item with this name may already be on the list."
+    },
+    "category": {
+      "breakfast": "Breakfasts",
+      "lunch": "Lunches",
+      "dinner": "Dinners",
+      "snack": "Snacks",
+      "dessert": "Desserts"
+    }
   }
 }

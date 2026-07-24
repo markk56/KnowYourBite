@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { MalformedProposalError, parseProposal } from './assessmentProposer'
+import { formatPayloadValue, MalformedProposalError, parseProposal } from './assessmentProposer'
 import { assertNoDirectIdentifiers, PseudonymizationError } from './pseudonymize'
 
 describe('parseProposal (server-side re-validation)', () => {
@@ -29,6 +29,34 @@ describe('parseProposal (server-side re-validation)', () => {
       expect(e).toBeInstanceOf(MalformedProposalError)
       expect((e as MalformedProposalError).rawOutput).toBe(raw)
     }
+  })
+})
+
+describe('formatPayloadValue (structured answers → prompt prose)', () => {
+  it('passes primitives through', () => {
+    expect(formatPayloadValue('none')).toBe('none')
+    expect(formatPayloadValue(7)).toBe('7')
+    expect(formatPayloadValue(true)).toBe('true')
+  })
+
+  it('renders selections, quantities and timed entries readably', () => {
+    expect(formatPayloadValue({ selected: ['gluten', 'lactose'], other: 'kiwi' })).toBe(
+      'gluten, lactose, other: kiwi',
+    )
+    expect(formatPayloadValue({ value: 2, unit: 'l' })).toBe('2 l')
+    expect(formatPayloadValue({ time: '07:30', text: 'oats' })).toBe('07:30 — oats')
+  })
+
+  it('renders repeater/frequency rows as compact tuples', () => {
+    expect(
+      formatPayloadValue([
+        { treatment: 'appendectomy', date: '2019-04-02' },
+        { treatment: '', date: null }, // empty row is skipped
+      ]),
+    ).toBe('(treatment: appendectomy, date: 2019-04-02)')
+    expect(formatPayloadValue([{ item: 'coffee', times: 2, period: 'day' }])).toBe(
+      '(item: coffee, times: 2, period: day)',
+    )
   })
 })
 

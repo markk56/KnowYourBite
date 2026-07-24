@@ -1,11 +1,25 @@
 import { useTranslation } from 'react-i18next'
-import type { AssessmentField, AssessmentSection, LocalizedText } from '@kyb/shared'
+import type {
+  AssessmentField,
+  AssessmentPayloadValue,
+  AssessmentSection,
+  FoodPreferenceCategory,
+  LocalizedText,
+  VisibleIf,
+} from '@kyb/shared'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
-
-type UiLocale = 'en' | 'hu' | 'ro'
+import {
+  FrequencyControl,
+  MultiSelectControl,
+  QuantityUnitControl,
+  RepeaterControl,
+  TimedTextControl,
+  YesNoControl,
+  type UiLocale,
+} from './controls'
 
 function useLocale(): UiLocale {
   const { i18n } = useTranslation()
@@ -15,18 +29,81 @@ function useLocale(): UiLocale {
 
 const tx = (l: LocalizedText, locale: UiLocale) => l[locale]
 
+/** English unit codes from the registry that need localized display text. */
+const UNIT_TEXT: Record<string, LocalizedText> = {
+  yr: { en: 'yr', hu: 'év', ro: 'ani' },
+  days: { en: 'days', hu: 'nap', ro: 'zile' },
+}
+const unitText = (unit: string, locale: UiLocale) => {
+  const localized = UNIT_TEXT[unit]
+  return localized ? tx(localized, locale) : unit
+}
+
+/** Simple inputs render whatever primitive is stored; structured values fall back to ''. */
+const asText = (value: unknown): string =>
+  typeof value === 'string' ? value : typeof value === 'number' || typeof value === 'boolean' ? String(value) : ''
+
 interface FieldProps {
   field: AssessmentField
   locale: UiLocale
-  value: string
-  onChange: (field: AssessmentField, value: string) => void
+  value: unknown
+  onChange: (field: AssessmentField, value: AssessmentPayloadValue) => void
   disabled?: boolean
+  /** Nomenclator labels per category (mealPicker); undefined while loading. */
+  foodOptions?: Partial<Record<FoodPreferenceCategory, string[]>>
 }
 
-function FieldControl({ field, locale, value, onChange, disabled }: FieldProps) {
+function FieldControl({ field, locale, value, onChange, disabled, foodOptions }: FieldProps) {
   const id = `af-${field.key}`
   const label = tx(field.label, locale)
   const placeholder = field.placeholder ? tx(field.placeholder, locale) : undefined
+  const emit = (v: AssessmentPayloadValue) => onChange(field, v)
+  const str = asText(value)
+
+  const composite = (() => {
+    switch (field.kind) {
+      case 'yesno':
+        return <YesNoControl field={field} locale={locale} value={value} onChange={emit} disabled={disabled} />
+      case 'multiselect':
+        return <MultiSelectControl field={field} locale={locale} value={value} onChange={emit} disabled={disabled} />
+      case 'mealPicker': {
+        const options = field.nomenclatorCategory ? foodOptions?.[field.nomenclatorCategory] : []
+        return (
+          <MultiSelectControl
+            field={field}
+            locale={locale}
+            value={value}
+            onChange={emit}
+            disabled={disabled}
+            stringOptions={options ?? []}
+            loading={foodOptions === undefined}
+          />
+        )
+      }
+      case 'quantityUnit':
+        return <QuantityUnitControl field={field} locale={locale} value={value} onChange={emit} disabled={disabled} />
+      case 'timedText':
+        return <TimedTextControl field={field} locale={locale} value={value} onChange={emit} disabled={disabled} />
+      case 'repeater':
+        return <RepeaterControl field={field} locale={locale} value={value} onChange={emit} disabled={disabled} />
+      case 'frequency':
+        return <FrequencyControl field={field} locale={locale} value={value} onChange={emit} disabled={disabled} />
+      default:
+        return null
+    }
+  })()
+
+  if (composite) {
+    return (
+      <div className="space-y-1.5">
+        <span className="block text-sm font-medium text-foreground">{label}</span>
+        {field.placeholder && field.kind === 'repeater' && (
+          <p className="text-xs text-muted-foreground">{placeholder}</p>
+        )}
+        {composite}
+      </div>
+    )
+  }
 
   const control = (() => {
     switch (field.kind) {
@@ -35,7 +112,7 @@ function FieldControl({ field, locale, value, onChange, disabled }: FieldProps) 
           <Textarea
             id={id}
             rows={3}
-            value={value}
+            value={str}
             placeholder={placeholder}
             disabled={disabled}
             onChange={(e) => onChange(field, e.target.value)}
@@ -43,7 +120,7 @@ function FieldControl({ field, locale, value, onChange, disabled }: FieldProps) 
         )
       case 'select':
         return (
-          <Select id={id} value={value} disabled={disabled} onChange={(e) => onChange(field, e.target.value)}>
+          <Select id={id} value={str} disabled={disabled} onChange={(e) => onChange(field, e.target.value)}>
             <option value="">—</option>
             {(field.options ?? []).map((o) => (
               <option key={o.value} value={o.value}>
@@ -63,11 +140,11 @@ function FieldControl({ field, locale, value, onChange, disabled }: FieldProps) 
                 key={n}
                 type="button"
                 disabled={disabled}
-                aria-pressed={value === String(n)}
-                onClick={() => onChange(field, value === String(n) ? '' : String(n))}
+                aria-pressed={str === String(n)}
+                onClick={() => onChange(field, str === String(n) ? '' : String(n))}
                 className={cn(
                   'h-9 w-9 rounded-md border text-sm font-medium transition-colors',
-                  value === String(n)
+                  str === String(n)
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-input bg-background text-foreground hover:bg-muted',
                 )}
@@ -85,12 +162,12 @@ function FieldControl({ field, locale, value, onChange, disabled }: FieldProps) 
               id={id}
               type="number"
               inputMode="decimal"
-              value={value}
+              value={str}
               disabled={disabled}
               onChange={(e) => onChange(field, e.target.value)}
               className="max-w-40"
             />
-            {field.unit && <span className="text-sm text-muted-foreground">{field.unit}</span>}
+            {field.unit && <span className="text-sm text-muted-foreground">{unitText(field.unit, locale)}</span>}
           </div>
         )
       case 'time':
@@ -98,7 +175,18 @@ function FieldControl({ field, locale, value, onChange, disabled }: FieldProps) 
           <Input
             id={id}
             type="time"
-            value={value}
+            value={str}
+            disabled={disabled}
+            onChange={(e) => onChange(field, e.target.value)}
+            className="max-w-40"
+          />
+        )
+      case 'date':
+        return (
+          <Input
+            id={id}
+            type="date"
+            value={str}
             disabled={disabled}
             onChange={(e) => onChange(field, e.target.value)}
             className="max-w-40"
@@ -108,7 +196,7 @@ function FieldControl({ field, locale, value, onChange, disabled }: FieldProps) 
         return (
           <Input
             id={id}
-            value={value}
+            value={str}
             placeholder={placeholder}
             disabled={disabled}
             onChange={(e) => onChange(field, e.target.value)}
@@ -129,14 +217,36 @@ function FieldControl({ field, locale, value, onChange, disabled }: FieldProps) 
 
 interface FormEngineProps {
   sections: AssessmentSection[]
-  getValue: (field: AssessmentField) => string
-  onChange: (field: AssessmentField, value: string) => void
+  getValue: (field: AssessmentField) => unknown
+  onChange: (field: AssessmentField, value: AssessmentPayloadValue) => void
   disabled?: boolean
+  /** Resolve any answer by key ('sex' or a payload key) for `visibleIf` conditions. */
+  valueForKey?: (key: string) => unknown
+  foodOptions?: Partial<Record<FoodPreferenceCategory, string[]>>
 }
 
 /** Schema-driven renderer: turns the `@kyb/shared` field registry into a form. */
-export function FormEngine({ sections, getValue, onChange, disabled }: FormEngineProps) {
+export function FormEngine({ sections, getValue, onChange, disabled, valueForKey, foodOptions }: FormEngineProps) {
   const locale = useLocale()
+
+  const isVisible = (cond?: VisibleIf): boolean => {
+    if (!cond) return true
+    if (!valueForKey) return true
+    return valueForKey(cond.key) === cond.equals
+  }
+
+  const renderField = (f: AssessmentField) =>
+    isVisible(f.visibleIf) ? (
+      <FieldControl
+        key={f.key}
+        field={f}
+        locale={locale}
+        value={getValue(f)}
+        onChange={onChange}
+        disabled={disabled}
+        foodOptions={foodOptions}
+      />
+    ) : null
 
   return (
     <div className="space-y-6">
@@ -151,36 +261,18 @@ export function FormEngine({ sections, getValue, onChange, disabled }: FormEngin
             <p className="whitespace-pre-wrap text-sm text-muted-foreground">{tx(section.note, locale)}</p>
           ) : (
             <div className="space-y-4">
-              {(section.fields ?? []).map((f) => (
-                <FieldControl
-                  key={f.key}
-                  field={f}
-                  locale={locale}
-                  value={getValue(f)}
-                  onChange={onChange}
-                  disabled={disabled}
-                />
-              ))}
+              {(section.fields ?? []).map(renderField)}
 
-              {(section.subgroups ?? []).map((group) => (
-                <fieldset key={group.key} className="rounded-lg border border-border/70 p-4">
-                  <legend className="px-1 text-sm font-medium text-muted-foreground">
-                    {tx(group.label, locale)}
-                  </legend>
-                  <div className="space-y-4">
-                    {group.fields.map((f) => (
-                      <FieldControl
-                        key={f.key}
-                        field={f}
-                        locale={locale}
-                        value={getValue(f)}
-                        onChange={onChange}
-                        disabled={disabled}
-                      />
-                    ))}
-                  </div>
-                </fieldset>
-              ))}
+              {(section.subgroups ?? [])
+                .filter((group) => isVisible(group.visibleIf))
+                .map((group) => (
+                  <fieldset key={group.key} className="rounded-lg border border-border/70 p-4">
+                    <legend className="px-1 text-sm font-medium text-muted-foreground">
+                      {tx(group.label, locale)}
+                    </legend>
+                    <div className="space-y-4">{group.fields.map(renderField)}</div>
+                  </fieldset>
+                ))}
             </div>
           )}
         </section>

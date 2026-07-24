@@ -121,6 +121,7 @@
     "starting": "Se începe…",
     "saving": "Se salvează…",
     "saved": "Salvat",
+    "saveFailed": "Salvarea a eșuat — verificați ultimul răspuns",
     "finish": "Finalizează cu AI",
     "finishing": "Se analizează…",
     "finishError": "Nu am putut finaliza evaluarea.",
@@ -145,6 +146,25 @@
       "approving": "Se aprobă…",
       "approveError": "Nu am putut aproba țintele.",
       "noMetrics": "Datele corporale (sex, vârstă, înălțime, greutate, activitate) nu au fost înregistrate, deci țintele de calorii și macro nu pot fi calculate. Introdu manual țintele finale mai jos."
+    },
+    "engine": {
+      "yes": "Da",
+      "no": "Nu",
+      "loading": "Se încarcă…",
+      "other": "Altele",
+      "otherPlaceholder": "Adăugați altceva…",
+      "addRow": "Rând nou",
+      "removeRow": "Șterge rândul",
+      "customItemPlaceholder": "Adăugați alt sport sau activitate…",
+      "add": "Adaugă",
+      "times": "de câte ori",
+      "period": "frecvență",
+      "periodDay": "pe zi",
+      "periodWeek": "pe săptămână",
+      "periodMonth": "pe lună",
+      "periodOther": "altă frecvență",
+      "periodOtherPlaceholder": "ex. ocazional",
+      "time": "Ora"
     }
   },
   "recipes": {
@@ -395,5 +415,28 @@
   },
   "sample": {
     "clientCount": "{count, plural, one {# client} few {# clienți} other {# de clienți}}"
+  },
+  "settings": {
+    "title": "Setări",
+    "loading": "Se încarcă…",
+    "loadError": "Setările nu au putut fi încărcate.",
+    "foodPrefs": {
+      "subtitle": "Mesele tipice bifabile rapid în anamneză — editați listele aici.",
+      "empty": "Niciun element încă.",
+      "addPlaceholder": "Aliment nou…",
+      "add": "Adaugă",
+      "rename": "Redenumire",
+      "save": "Salvează",
+      "cancel": "Anulează",
+      "delete": "Șterge",
+      "saveError": "Salvarea a eșuat — poate un element cu acest nume există deja în listă."
+    },
+    "category": {
+      "breakfast": "Mic dejun",
+      "lunch": "Prânzuri",
+      "dinner": "Cine",
+      "snack": "Gustări",
+      "dessert": "Deserturi"
+    }
   }
 }

@@ -17,7 +17,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/clients', labelKey: 'nav.clients', icon: Users, ready: true },
   { path: '/recipes', labelKey: 'nav.recipes', icon: BookOpen, ready: true },
   { path: '/planner', labelKey: 'nav.planner', icon: CalendarDays, ready: true },
-  { path: '/settings', labelKey: 'nav.settings', icon: Settings, ready: false },
+  { path: '/settings', labelKey: 'nav.settings', icon: Settings, ready: true },
 ]
 
 export function Sidebar() {

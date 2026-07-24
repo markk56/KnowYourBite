@@ -5,6 +5,7 @@ import { createClientsRouter } from '../clients/routes'
 import { createAssessmentsRouter } from '../assessments/routes'
 import { createRecipesRouter } from '../recipes/routes'
 import { createMealPlansRouter } from '../mealPlans/routes'
+import { createFoodPreferencesRouter } from '../foodPreferences/routes'
 import { createUsdaRouter } from '../usda/routes'
 import { requireAuth } from '../middleware/tenant'
 
@@ -30,6 +31,8 @@ export function createApiRouter(): Router {
   router.use('/recipes', requireAuth, createRecipesRouter())
   // Meal planning (Milestone 4) — the flagship module.
   router.use('/meal-plans', requireAuth, createMealPlansRouter())
+  // Settings: the tenant's food-preference nomenclator (anamnesis meal checklists).
+  router.use('/food-preferences', requireAuth, createFoodPreferencesRouter())
 
   return router
 }
